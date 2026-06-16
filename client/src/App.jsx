@@ -18,6 +18,7 @@ import { AttentionCheck } from './intro-exit/AttentionCheck.jsx';
 import { NegotiationOutcome } from './intro-exit/NegotiationOutcome.jsx';
 import { ForceQuitExitStep } from './intro-exit/ForceQuitExitStep.jsx';
 import { BatchFullExitStep } from './intro-exit/BatchFullExitStep.jsx';
+import {FollowupQuestion} from './intro-exit/FollowupQuestion.jsx';
 import DailyIframe from "@daily-co/daily-js";
 
 // Create context for Daily.co call management (includes media stream)
@@ -183,7 +184,7 @@ export default function App() {
       exitSteps.push(ForceQuitExitStep);
     }
 
-    exitSteps.push(NegotiationOutcome)
+    exitSteps.push(FollowupQuestion, NegotiationOutcome)
 
     return(exitSteps)
   }
