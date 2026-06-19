@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('has tips:', 'tips' in d\\); print\\('keys:', list\\(d.keys\\(\\)\\)[:10]\\)\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/SamQuinto/Describing-Search-in-Negotiations/refs/heads/main/scenario_5_party.json\")",
+      "Bash(npx esbuild *)"
+    ]
+  }
+}

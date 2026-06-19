@@ -12,6 +12,7 @@ SSH_KEY_PATH="$HOME/.ssh/id_rsa"
 BUNDLE_FILENAME="VideoChatApp.tar.zst"
 REMOTE_USER="root" 
 
+# don't overwrite the remote treament [does overwrite local!]
 scp -i "$SSH_KEY_PATH" -o StrictHostKeyChecking=no "$REMOTE_USER@$IP_ADDRESS:/root/.empirica/treatments.yaml" .empirica/treatments.yaml
 
 set -e  # Exit on any error

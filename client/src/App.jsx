@@ -10,8 +10,6 @@ import { CustomLobby } from "./intro-exit/CustomLobby";
 import { DisplayNameEntry } from "./intro-exit/DisplayNameEntry.jsx";
 import { AutoPlayerIdForm } from "./intro-exit/AutoPlayerIdForm.jsx";
 import CustomConsent from './intro-exit/CustomConsent.jsx';
-import { Introduction } from './intro-exit/Introduction.jsx';
-import { TimeCommitment } from './intro-exit/TimeCommitment.jsx';
 import { Demo } from './intro-exit/Demo.jsx';
 import { Instructions } from './intro-exit/Instructions.jsx';
 import { AttentionCheck } from './intro-exit/AttentionCheck.jsx';
@@ -148,9 +146,9 @@ export default function App() {
       return []
     }
 
-    introSteps.push(Introduction)
-    introSteps.push(TimeCommitment)
-    introSteps.push(CustomConsent)
+    // CustomConsent is now a multi-page flow (Introduction + Time Commitment +
+    // Consent) with its own page-progress persistence, so the first standalone
+    // intro step after it is Instructions.
     introSteps.push(Instructions)
     introSteps.push(AttentionCheck)
     introSteps.push(Demo)
@@ -969,7 +967,7 @@ export default function App() {
           <div>
             <EmpiricaContext playerCreate={AutoPlayerIdForm} finished={Finished}
              lobby={CustomLobby}
-            introSteps={introSteps} exitSteps={exitSteps}  disableConsent={true} >
+            introSteps={introSteps} exitSteps={exitSteps}  consent={CustomConsent} disableConsent={false} >
               <Game />
             </EmpiricaContext>
           </div>

@@ -90,8 +90,7 @@ zopa-vs-complexity/
 │   │   │   ├── Timer.jsx            # Countdown timer
 │   │   │   └── VideoChat.jsx        # Daily.co video integration
 │   │   ├── intro-exit/
-│   │   │   ├── Introduction.jsx     # Experiment overview
-│   │   │   ├── CustomConsent.jsx    # Research consent form
+│   │   │   ├── CustomConsent.jsx    # Multi-page onboarding + consent gate (intro, time commitment, difficulty note, consent form)
 │   │   │   ├── DisplayNameEntry.jsx # Participant name input
 │   │   │   ├── AutoPlayerIdForm.jsx # Auto-generate participant IDs
 │   │   │   └── ExitSurvey.jsx       # Post-experiment survey (empty)
@@ -719,8 +718,8 @@ React.memo(LocalVideoComponent, (prevProps, nextProps) => {
 
 ### Best Practices Implemented
 
-1. **Explicit consent** - CustomConsent.jsx requires agreement
-2. **Recording disclosure** - Introduction mentions video recording
+1. **Explicit consent** - CustomConsent.jsx requires agreement on its final page
+2. **Recording disclosure** - CustomConsent's intro and consent pages disclose video recording
 3. **Token-based access** - Daily.co uses meeting tokens (not public URLs)
 4. **Empirica auth** - Admin dashboard requires login
 5. **HTTPS** - Caddy handles SSL/TLS automatically
