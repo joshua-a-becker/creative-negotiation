@@ -79,6 +79,8 @@ export function FollowupQuestion({ next }) {
             </>
           )}
 
+          
+
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
               <label
