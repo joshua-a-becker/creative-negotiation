@@ -78,9 +78,11 @@ export function FollowupQuestion({ next }) {
               </div>
             </>
           )}
-
-          
-
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <p className="text-lg text-gray-700"><strong>Thank you for participating!</strong><br/><br/></p>
+            
+          <p className="text-lg text-gray-700">Although it is difficult to get everyone a positive score, it is possible. Approximately 50% of the participants in our pilot studies reached an agreement.</p>
+          </div>
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
               <label
