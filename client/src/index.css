@@ -2,6 +2,24 @@ body {
   background-color: #d1d5db; /* gray-300 */
 }
 
+/* Wiggle: still most of the 3s cycle, brief shake at the very end */
+@keyframes wiggle {
+  0%, 88%, 100% { transform: rotate(0deg); }
+  90% { transform: rotate(-2deg); }
+  92% { transform: rotate(2deg); }
+  94% { transform: rotate(-2deg); }
+  96% { transform: rotate(2deg); }
+  98% { transform: rotate(-1deg); }
+}
+
+.animate-wiggle {
+  animation: wiggle 3s ease-in-out infinite;
+}
+
+.animate-wiggle:hover {
+  animation: none;
+}
+
 @layer utilities {
   /* Chrome, Safari, Edge, Opera */
   input.number-arrows-none::-webkit-outer-spin-button,

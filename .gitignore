@@ -3,3 +3,6 @@
 *.zst
 .DS_Store
 /data_download
+# scorer API keys (uploaded with ~/score_offer, never committed)
+app/openai_key.txt
+app/anthropic_key.txt

@@ -11,9 +11,10 @@ export function Instructions({ next }) {
   const otherPlayers = playerCount - 1;
 
   const section1 = [
-    <>In this activity, you must reach agreement with <span className="font-bold">{otherPlayers} other player{otherPlayers !== 1 ? "s" : ""}</span> on a set of options for a hypothetical shared office space.</>,
-    <>You will be assigned a scoresheet that gives points for different options, with some options giving <span className="font-bold text-red-600">negative points</span>.</>,
-    <>You will seek to reach agreement on a proposal whose total score across different options yields <span className="font-bold text-green-600">positive points</span>.</>,
+    <>In this activity, you must reach agreement with <span className="font-bold">{otherPlayers} other player{otherPlayers !== 1 ? "s" : ""}</span> on the terms of a hypothetical job offer.</>,
+    <>You will be assigned a role with private information about which terms give you points, with some terms giving <span className="font-bold text-red-600">negative points</span>.</>,
+    <>You make proposals <span className="font-bold">in your own words</span>. The system reads each proposal and tells you what it is worth to you before you submit it.</>,
+    <>You will seek to reach agreement on a proposal whose total value to you is <span className="font-bold text-green-600">positive</span>.</>,
     <>After the activity, you will receive a <span className="font-bold">bonus payment</span> equal to the number of points you earn (1 point = £1.00).</>,
   ];
 
@@ -22,7 +23,7 @@ export function Instructions({ next }) {
     <>You can make proposals, vote on others proposals, and modify proposals.</>,
     <>You can make, modify, and vote on <span className="font-bold">as many proposals as you need</span> to reach agreement.</>,
     <>When a proposal passes with <span className="font-bold">100% yes votes</span>, you will have the option to finalize that proposal or keep looking for a better option.</>,
-    <>You will now be provided with a demo, using a fictional roommate agreement to show how the app works.</>,
+    <>You will now complete a short practice negotiation about booking a community event venue, to show how the app works.</>,
   ];
 
   const bullets = section === 1 ? section1 : section2;

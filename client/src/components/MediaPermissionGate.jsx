@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
+import { MicOff, Video, VideoOff } from "lucide-react";
+import { getTrackedUserMedia } from "../mediaTracks";
 
-export function MediaPermissionGate({ children, onPermissionsGranted, storedVideoDeviceId, storedAudioDeviceId }) {
+export function MediaPermissionGate({ children, onPermissionsGranted, storedVideoDeviceId, storedAudioDeviceId, storedAudioEnabled, storedVideoEnabled }) {
   const [hasMediaPermissions, setHasMediaPermissions] = useState(false);
   const [permissionDenied, setPermissionDenied] = useState(false);
   const [showQuitConfirmation, setShowQuitConfirmation] = useState(false);
@@ -12,6 +14,9 @@ export function MediaPermissionGate({ children, onPermissionsGranted, storedVide
   const [audioDevices, setAudioDevices] = useState([]);
   const [selectedVideoDevice, setSelectedVideoDevice] = useState(storedVideoDeviceId || "");
   const [selectedAudioDevice, setSelectedAudioDevice] = useState(storedAudioDeviceId || "");
+  // Mic/camera on-off choice, defaulting to on unless a prior choice was persisted.
+  const [audioEnabled, setAudioEnabled] = useState(storedAudioEnabled === undefined ? true : storedAudioEnabled);
+  const [videoEnabled, setVideoEnabled] = useState(storedVideoEnabled === undefined ? true : storedVideoEnabled);
   const previewVideoRef = useRef(null);
 
   // Check if permissions are already granted AND stream exists in state
@@ -73,7 +78,7 @@ export function MediaPermissionGate({ children, onPermissionsGranted, storedVide
   // Request initial permission (to get device list)
   const requestInitialPermission = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
+      const stream = await getTrackedUserMedia({
         video: true,
         audio: true
       });
@@ -111,7 +116,7 @@ export function MediaPermissionGate({ children, onPermissionsGranted, storedVide
         audio: selectedAudioDevice ? { deviceId: { exact: selectedAudioDevice } } : true
       };
 
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const stream = await getTrackedUserMedia(constraints);
       setMediaStream(stream);
       console.log("Media stream created with selected devices");
 
@@ -119,7 +124,7 @@ export function MediaPermissionGate({ children, onPermissionsGranted, storedVide
       setShowDeviceSelector(false);
 
       if (onPermissionsGranted) {
-        onPermissionsGranted(stream, selectedVideoDevice, selectedAudioDevice);
+        onPermissionsGranted(stream, selectedVideoDevice, selectedAudioDevice, audioEnabled, videoEnabled);
       }
     } catch (err) {
       console.error("Failed to create stream with selected devices:", err);
@@ -145,7 +150,7 @@ export function MediaPermissionGate({ children, onPermissionsGranted, storedVide
           video: { deviceId: { exact: storedVideoDeviceId } },
           audio: { deviceId: { exact: storedAudioDeviceId } }
         };
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        const stream = await getTrackedUserMedia(constraints);
         setMediaStream(stream);
         console.log("Media stream re-acquired with stored devices");
         setHasMediaPermissions(true);
@@ -188,7 +193,7 @@ export function MediaPermissionGate({ children, onPermissionsGranted, storedVide
             tracks.forEach(track => track.stop());
           }
 
-          const previewStream = await navigator.mediaDevices.getUserMedia({
+          const previewStream = await getTrackedUserMedia({
             video: { deviceId: { exact: selectedVideoDevice } },
             audio: false
           });
@@ -200,6 +205,19 @@ export function MediaPermissionGate({ children, onPermissionsGranted, storedVide
       };
       updatePreview();
     }
+
+    // Stop the preview camera stream when the selector closes ("Confirm
+    // Selection" flips showDeviceSelector to false) or on unmount. Without this
+    // the preview's video track stays live for the whole session and keeps the
+    // browser camera indicator lit — it never enters App's mediaStream, so
+    // teardownCall() can't reach it.
+    return () => {
+      const stream = previewVideoRef.current?.srcObject;
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+        previewVideoRef.current.srcObject = null;
+      }
+    };
   }, [selectedVideoDevice, showDeviceSelector]);
 
   // Show loading state while checking
@@ -304,7 +322,7 @@ export function MediaPermissionGate({ children, onPermissionsGranted, storedVide
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Camera Preview
               </label>
-              <div className="bg-gray-100 rounded-lg overflow-hidden">
+              <div className="relative bg-gray-100 rounded-lg overflow-hidden">
                 <video
                   ref={previewVideoRef}
                   autoPlay
@@ -312,6 +330,47 @@ export function MediaPermissionGate({ children, onPermissionsGranted, storedVide
                   playsInline
                   className="w-full h-64 object-contain"
                 />
+
+                {/* Camera Off overlay */}
+                {!videoEnabled && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
+                    <div className="flex flex-col items-center text-white">
+                      <VideoOff className="h-6 w-6" />
+                      <span className="text-sm">Camera Off</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Audio/Video toggle buttons - bottom center inside the preview */}
+                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setAudioEnabled((v) => !v)}
+                    className={`p-2 rounded-full ${audioEnabled ? 'bg-gray-700 hover:bg-gray-600' : 'bg-red-600 hover:bg-red-500'} text-white transition-colors`}
+                    title={audioEnabled ? "Mute microphone" : "Unmute microphone"}
+                  >
+                    {audioEnabled ? (
+                      // Microphone icon
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <MicOff className="h-5 w-5 text-white" />
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setVideoEnabled((v) => !v)}
+                    className={`p-2 rounded-full ${videoEnabled ? 'bg-gray-700 hover:bg-gray-600' : 'bg-red-600 hover:bg-red-500'} text-white transition-colors`}
+                    title={videoEnabled ? "Turn off camera" : "Turn on camera"}
+                  >
+                    {videoEnabled ? (
+                      <Video className="h-5 w-5 text-white" />
+                    ) : (
+                      <VideoOff className="h-5 w-5 text-white" />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 

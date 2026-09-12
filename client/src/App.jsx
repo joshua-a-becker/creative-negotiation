@@ -18,6 +18,7 @@ import { ForceQuitExitStep } from './intro-exit/ForceQuitExitStep.jsx';
 import { BatchFullExitStep } from './intro-exit/BatchFullExitStep.jsx';
 import {FollowupQuestion} from './intro-exit/FollowupQuestion.jsx';
 import DailyIframe from "@daily-co/daily-js";
+import { stopAllTrackedStreams } from "./mediaTracks";
 
 // Create context for Daily.co call management (includes media stream)
 export const DailyCallContext = createContext(null);
@@ -116,6 +117,10 @@ export default function App() {
   const [isAudioEnabled, setIsAudioEnabled] = useState(false);
   const [isVideoEnabled, setIsVideoEnabled] = useState(false);
   const [isVideoChatMounted, setIsVideoChatMounted] = useState(false);
+  // Authoritative override: when true, force mic + camera off regardless of the
+  // per-toggle state (used by the welcome modal so it wins the mount-time race
+  // with VideoChat re-asserting the player's saved state).
+  const [mediaLocked, setMediaLocked] = useState(false);
 
   // Use refs for state that event handlers need to access
   const callStateRef = useRef(callState);
@@ -817,9 +822,10 @@ export default function App() {
       return;
     }
 
-    // Only enable tracks if VideoChat is mounted AND the individual toggle is enabled
-    const shouldEnableAudio = isVideoChatMounted && isAudioEnabled;
-    const shouldEnableVideo = isVideoChatMounted && isVideoEnabled;
+    // Only enable tracks if not force-locked off, VideoChat is mounted, AND the
+    // individual toggle is enabled.
+    const shouldEnableAudio = !mediaLocked && isVideoChatMounted && isAudioEnabled;
+    const shouldEnableVideo = !mediaLocked && isVideoChatMounted && isVideoEnabled;
 
     console.log("Updating track states:", {
       isVideoChatMounted,
@@ -835,7 +841,7 @@ export default function App() {
     } catch (err) {
       console.error("Failed to update track states:", err);
     }
-  }, [isAudioEnabled, isVideoEnabled, isVideoChatMounted, hasJoinedCall]);
+  }, [isAudioEnabled, isVideoEnabled, isVideoChatMounted, hasJoinedCall, mediaLocked]);
 
   // Create stable callback for registering call data (only call once)
   // Only updates if critical join data changes (roomUrl, token, displayName)
@@ -941,6 +947,74 @@ export default function App() {
     }
   }, [setCallState]);
 
+  // Fully release the Daily call AND the local getUserMedia capture. Used by the
+  // prep stages (Read Negotiation Role / Ready To Negotiate), which show no video:
+  // this stops the cloud recording/transcription and — by stopping the local
+  // tracks — extinguishes the browser camera/mic indicator. VideoChat re-acquires
+  // media and rejoins on its own when the negotiation stage mounts it.
+  // Idempotent: safe to call when already torn down.
+  const teardownCall = useCallback(async () => {
+    const callObject = callObjectRef.current;
+    if (callObject) {
+      // Guard each step independently: stopRecording/stopTranscription/leave are
+      // async network calls that can reject, and a rejection must NOT skip
+      // destroy(). Daily holds its own (cloned) camera track internally, and only
+      // destroy() releases it — if we skip it, the browser camera indicator stays
+      // lit even after we stop our own mediaStream tracks below.
+      try {
+        if (callStateRef.current.isRecording) await callObject.stopRecording();
+      } catch (err) { console.error("teardownCall: stopRecording failed", err); }
+      try {
+        if (callStateRef.current.isTranscribing) await callObject.stopTranscription();
+      } catch (err) { console.error("teardownCall: stopTranscription failed", err); }
+
+      // Defensively stop the local tracks Daily is holding (its own clones of the
+      // camera/mic) before leaving, in case destroy() doesn't release them.
+      try {
+        const local = callObject.participants?.()?.local;
+        if (local?.tracks) {
+          Object.values(local.tracks).forEach((t) => {
+            t?.persistentTrack?.stop?.();
+            t?.track?.stop?.();
+          });
+        }
+      } catch (err) { console.error("teardownCall: stopping local Daily tracks failed", err); }
+
+      try {
+        await callObject.leave();
+      } catch (err) { console.error("teardownCall: leave failed", err); }
+      try {
+        callObject.destroy();
+      } catch (err) { console.error("teardownCall: destroy failed", err); }
+    }
+
+    callObjectRef.current = null;
+    participantTracksRef.current = {};
+
+    // Stop the local capture tracks (functional updater avoids a stale closure).
+    setMediaStream((prev) => {
+      prev?.getTracks().forEach((track) => track.stop());
+      return null;
+    });
+
+    // Force-stop EVERY getUserMedia stream the app ever opened — the current
+    // mediaStream plus any orphans (device-selector preview, retries, double
+    // mounts). The browser indicator only clears once all tracks read "ended".
+    stopAllTrackedStreams();
+
+    setCallState({
+      remoteStreams: {},
+      participantNames: {},
+      participantRepStatus: {},
+      participantVideoStates: {},
+      participantAudioStates: {},
+      isRecording: false,
+      isTranscribing: false,
+      localVideoTrack: null,
+    });
+    setHasJoinedCall(false);
+  }, []);
+
   // Create context value object with useMemo to prevent unnecessary re-renders
   // Note: setMediaStream and setCallState are stable (from useState), so don't need to be in deps
   // Note: registerCallData is stable (from useCallback with empty deps)
@@ -957,7 +1031,10 @@ export default function App() {
     isVideoEnabled,
     setIsVideoEnabled,
     setIsVideoChatMounted,
-  }), [mediaStream, callState, registerCallData, refreshRemoteParticipant, isAudioEnabled, isVideoEnabled]);
+    mediaLocked,
+    setMediaLocked,
+    teardownCall,
+  }), [mediaStream, callState, registerCallData, refreshRemoteParticipant, teardownCall, isAudioEnabled, isVideoEnabled, mediaLocked]);
 
   return (
     <EmpiricaParticipant url={url} ns={playerKey} modeFunc={EmpiricaClassic}>

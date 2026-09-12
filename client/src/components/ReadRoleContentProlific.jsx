@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { usePlayer, useGame } from "@empirica/core/player/classic/react";
-import Markdown from "react-markdown";
+import { RoleNarrative } from "./RoleNarrative";
 
 export function ReadRoleContent({ profileComponent }) {
   const player = usePlayer();
@@ -94,7 +94,7 @@ export function ReadRoleContent({ profileComponent }) {
               Your Role
             </h3>
             <div className="prose prose-gray max-w-none text-gray-700 leading-relaxed">
-              <Markdown>{roleNarrative}</Markdown>
+              <RoleNarrative>{roleNarrative}</RoleNarrative>
             </div>
           </div>
 

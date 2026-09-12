@@ -57,7 +57,7 @@ export function DisplayNameEntry({ next }) {
   };
 
   // Handle permissions granted with device IDs
-  const handlePermissionsGranted = (stream, videoDeviceId, audioDeviceId) => {
+  const handlePermissionsGranted = (stream, videoDeviceId, audioDeviceId, audioEnabled, videoEnabled) => {
     setMediaStream(stream);
 
     // Store device IDs in player data for later use
@@ -67,6 +67,25 @@ export function DisplayNameEntry({ next }) {
     if (audioDeviceId) {
       player.set("audioDeviceId", audioDeviceId);
     }
+
+    // Persist the mic/camera choice from the gate so it flows into the game.
+    // When the gate provides an explicit choice, honor it; otherwise seed a
+    // default only when unset (never clobbering a prior choice). Matches VideoChat's
+    // history format, so VideoChat's own default-write becomes a no-op fallback.
+    if (audioEnabled !== undefined) {
+      player.set("audioEnabled", audioEnabled);
+      player.set("audioHistory", [[audioEnabled ? "on" : "off", Date.now()]]);
+    } else if (player.get("audioEnabled") === undefined) {
+      player.set("audioEnabled", true);
+      player.set("audioHistory", [["on", Date.now()]]);
+    }
+    if (videoEnabled !== undefined) {
+      player.set("videoEnabled", videoEnabled);
+      player.set("videoHistory", [[videoEnabled ? "on" : "off", Date.now()]]);
+    } else if (player.get("videoEnabled") === undefined) {
+      player.set("videoEnabled", true);
+      player.set("videoHistory", [["on", Date.now()]]);
+    }
   };
 
   return (
@@ -74,6 +93,8 @@ export function DisplayNameEntry({ next }) {
       onPermissionsGranted={handlePermissionsGranted}
       storedVideoDeviceId={storedVideoDeviceId}
       storedAudioDeviceId={storedAudioDeviceId}
+      storedAudioEnabled={player?.get("audioEnabled")}
+      storedVideoEnabled={player?.get("videoEnabled")}
     >
       <div className="mt-3 sm:mt-5 p-10 max-w-2xl mx-auto">
         <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">

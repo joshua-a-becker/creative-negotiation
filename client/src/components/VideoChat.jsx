@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useContext } from "react";
 import { usePlayer, usePlayers, useGame } from "@empirica/core/player/classic/react";
 import { DailyCallContext } from "../App";
 import { VolumeX, MicOff, VideoOff, Video } from "lucide-react";
+import { getTrackedUserMedia } from "../mediaTracks";
 
 // Memoized components outside the main component to prevent recreation
 const LocalVideoComponent = React.memo(({ localVideoRef, displayName, isHidden, onToggleHide, isAudioEnabled, isVideoEnabled, onToggleAudio, onToggleVideo }) => {
@@ -291,6 +292,7 @@ export function VideoChat({ defaultHideSelf = false }) {
     isVideoEnabled,
     setIsVideoEnabled,
     setIsVideoChatMounted,
+    mediaLocked,
   } = useContext(DailyCallContext);
 
   const roomUrl = game?.get("roomUrl");
@@ -329,14 +331,14 @@ export function VideoChat({ defaultHideSelf = false }) {
           audio: storedAudioDeviceId ? { deviceId: { exact: storedAudioDeviceId } } : true
         };
 
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        const stream = await getTrackedUserMedia(constraints);
         setMediaStream(stream);
         // console.log("VideoChat: Media stream acquired");
       } catch (err) {
         console.error("VideoChat: Failed to get media stream:", err);
         // If specific devices fail, try with defaults
         try {
-          const stream = await navigator.mediaDevices.getUserMedia({
+          const stream = await getTrackedUserMedia({
             video: true,
             audio: true
           });
@@ -582,8 +584,12 @@ export function VideoChat({ defaultHideSelf = false }) {
           displayName={localDisplayName}
           isHidden={isSelfVideoHidden}
           onToggleHide={toggleSelfVideoVisibility}
-          isAudioEnabled={isAudioEnabled}
-          isVideoEnabled={isVideoEnabled}
+          /* mediaLocked (the welcome modal) already forces the Daily tracks off in
+             App.jsx, so the local tile has to render muted / camera-off to match —
+             otherwise the player watches a live self-view while sending nothing. It
+             never overwrites the toggle state, so releasing the lock restores it. */
+          isAudioEnabled={isAudioEnabled && !mediaLocked}
+          isVideoEnabled={isVideoEnabled && !mediaLocked}
           onToggleAudio={toggleAudio}
           onToggleVideo={toggleVideo}
         />

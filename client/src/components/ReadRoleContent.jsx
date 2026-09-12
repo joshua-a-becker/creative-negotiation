@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 import { usePlayer, useGame } from "@empirica/core/player/classic/react";
-import Markdown from "react-markdown";
+import { RoleNarrative } from "./RoleNarrative";
+import { ScoringCalculator } from "./negotiationDisplay";
+import { useOfferScoring } from "./useOfferScoring";
 
 export function ReadRoleContent({ profileComponent }) {
   const player = usePlayer();
@@ -13,7 +15,7 @@ export function ReadRoleContent({ profileComponent }) {
   const roleRP = player.get("roleRP");
   const [showFade, setShowFade] = useState(false);
   const scrollContainerRef = useRef(null);
-  const [selectedOptions, setSelectedOptions] = useState({});
+  const { offerText, setOfferText, calculating, scoreResult, calculate } = useOfferScoring({ role: roleName });
 
   // Handle scroll to show/hide fade
   const handleScroll = () => {
@@ -23,15 +25,7 @@ export function ReadRoleContent({ profileComponent }) {
     }
   };
 
-  // Calculate current total points
-  const calculateTotalPoints = () => {
-    return Object.entries(roleScoresheet).reduce((sum, [category]) => {
-      const optionIdx = selectedOptions[category] ?? 1; // Default to exclude (index 1)
-      return sum + (roleScoresheet[category]?.[optionIdx]?.score || 0);
-    }, 0);
-  };
-
-  if (!roleName || !roleNarrative || !roleScoresheet) {
+  if (!roleName || !roleNarrative) {
     return (
       <div className="w-full h-full flex items-center justify-center">
         <p className="text-gray-500">Loading your role...</p>
@@ -93,7 +87,7 @@ export function ReadRoleContent({ profileComponent }) {
               Your Role
             </h3>
             <div className="prose prose-gray max-w-none text-gray-700 leading-relaxed">
-              <Markdown>{roleNarrative}</Markdown>
+              <RoleNarrative>{roleNarrative}</RoleNarrative>
             </div>
           </div>
 
@@ -114,97 +108,18 @@ export function ReadRoleContent({ profileComponent }) {
             </div>
           )*/}
 
-          {/* 3. Scoring Section */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h3 className="text-2xl font-bold text-blue-900 mb-4">Scoring (1 point = £1.00) </h3>
-
-            {/* Table Header */}
-            <div className="flex items-center px-4 py-2 mb-1">
-              <span className="w-8"></span> {/* Checkbox space */}
-              <span className="text-xs font-bold text-gray-700 uppercase flex-shrink-0 w-[140px]">
-                Feature
-              </span>
-              <span className="text-xs font-bold text-gray-700 uppercase flex-shrink-0 w-[80px] text-center">
-                Points
-              </span>
-              <span className="text-xs font-bold text-gray-700 uppercase flex-1 ml-4">
-                Reason
-              </span>
-            </div>
-
-            {/* Main content area with rows and total points side by side */}
-            <div className="flex gap-6">
-              {/* Left side: Scoresheet rows (2/3 width) */}
-              <div className="flex-[9] space-y-2">
-                {Object.entries(roleScoresheet)
-                  .map(([category, options]) => {
-                  const includeOption = options[0];
-                  const isChecked = selectedOptions[category] === 0;
-
-                  return (
-                    <div key={category} className="flex items-center bg-white rounded px-4 py-2.5 border border-blue-300">
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={(e) => {
-                          setSelectedOptions(prev => {
-                            if (e.target.checked) {
-                              return { ...prev, [category]: 0 };
-                            } else {
-                              return { ...prev, [category]: 1 };
-                            }
-                          });
-                        }}
-                        className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer mr-3"
-                      />
-                      <span className="text-sm font-semibold text-gray-800 flex-shrink-0 w-[140px]">
-                        {category.replace(/_/g, " ")}
-                      </span>
-                      <span className={`text-base font-bold flex-shrink-0 w-[80px] text-center ${
-                        isChecked
-                          ? (includeOption.score >= 0 ? 'text-blue-600' : 'text-red-600')
-                          : 'text-gray-400'
-                      }`}>
-                        {includeOption.score >= 0 ? '+' : ''}{includeOption.score} pts
-                      </span>
-                      <span
-                        className="text-sm text-gray-600 flex-1 ml-4"
-                        dangerouslySetInnerHTML={{ __html: includeOption.reason }}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Right side: Total Points (1/3 width) */}
-              <div className="flex-[4] flex flex-col items-center justify-start">
-                <div className="text-center bg-white rounded-lg p-6 shadow-md w-full">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">Total Points</h3>
-                  <div className="text-5xl font-bold mb-4">
-                    <span className="text-blue-600">
-                      {calculateTotalPoints().toFixed(2)}
-                    </span>
-                  </div>
-                  {roleRP !== undefined && (
-                    <div className={`text-sm font-semibold ${
-                      calculateTotalPoints() >= roleRP ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {calculateTotalPoints() >= roleRP ? '✓ Beats your alternative!' : '✗ Worse than your alternative.'}
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-6 w-full">
-                  <button
-                    onClick={() => setSelectedOptions({})}
-                    className="w-full px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-sm font-medium"
-                  >
-                    Reset All
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* 3. Practice scoring: try offers in your own words, see their value */}
+          <ScoringCalculator
+            title="Scoring Calculator"
+            text={offerText}
+            onTextChange={setOfferText}
+            onCalculate={calculate}
+            calculating={calculating}
+            result={scoreResult}
+            roleRP={roleRP}
+            roleName={roleName}
+            emptyMessage="Try out an offer to see what it would be worth to you. Nothing you type here is shared with the other side."
+          />
 
           {/* 4. Tips on Negotiation Section */}
           <div className="bg-white rounded-lg shadow-md p-6">

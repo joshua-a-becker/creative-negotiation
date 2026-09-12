@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { usePlayer, useStageTimer } from "@empirica/core/player/classic/react";
-import { CustomLobby } from "../intro-exit/CustomLobby";
 import { ReadRoleContent } from "./ReadRoleContent";
 
 export function ReadRole({ profileComponent }) {
@@ -20,11 +19,13 @@ export function ReadRole({ profileComponent }) {
     return <ReadRoleContent profileComponent={profileComponent} />;
   }
 
-  // Show CustomLobby with the modal overlay
+  // Show the welcome modal over a neutral backdrop (no video during prep)
   return (
     <div className="relative">
-      {/* CustomLobby content (behind the modal) */}
-      <CustomLobby />
+      {/* Neutral backdrop behind the modal. Deliberately NOT the lobby (which
+          would mount VideoChat and re-acquire the camera): this is a prep stage,
+          so the camera stays released and nothing is recorded. */}
+      <div className="min-h-screen bg-gray-100" />
 
       {/* Welcome Modal */}
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

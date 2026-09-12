@@ -19,6 +19,7 @@ factors:
         - value: 600
     - name: roleDataURL
       values:
+        - value: https://raw.githubusercontent.com/joshua-a-becker/creative-negotiation/main/roles/candidate_role.json,https://raw.githubusercontent.com/joshua-a-becker/creative-negotiation/main/roles/recruiter_role.json
         - value: https://raw.githubusercontent.com/SamQuinto/Describing-Search-in-Negotiations/refs/heads/main/shared_office_3p_easy.json
         - value: https://raw.githubusercontent.com/SamQuinto/Describing-Search-in-Negotiations/refs/heads/main/shared_office_3p_hard.json
     - name: noAgreementEndingMessage
@@ -53,25 +54,14 @@ factors:
         - value: 900
         - value: 7200
 treatments:
-    - name: 3-party-easy
+    - name: test
       factors:
         batchFullEndingMessage: 'Unfortunately, there are too many people interested in the study and all study slots have been taken for now. Rather than rejecting your submission, we want to pay you partially for your time, so we kindly ask that you return the study on Prolific by clicking <a href="https://app.prolific.com/submissions/complete?cc=CNUVAKO5" style="color: blue; text-decoration: underline; font-weight: bold;">this link</a>. There is no need to contact the researcher. '
         gameTerminatedEndingMessage: 'The game ended prematurely because the study window ended or an error occurred. Rather than rejecting your submission, we want to pay you partially for the time and work you have completed, so we kindly ask that you return the study on Prolific by clicking <a href="https://app.prolific.com/submissions/complete?cc=CYHATDNN" style="color: blue; text-decoration: underline; font-weight: bold;">this link</a>. There is no need to contact the researcher.'
         negotiateTime: 7200
         noAgreementEndingMessage: 'You did not reach an agreement. You will receive the base payment in full, but your bonus payment is £0. To complete the task and claim your payment, please click <a href="https://app.prolific.com/submissions/complete?cc=C1G07N5A" style="color: blue; text-decoration: underline; font-weight: bold;">this link</a> to be redirected to Prolific. There is no need to contact the researcher. '
         noGameEndingMessage: 'We’re sorry, but we were unable to match you with other participants in time (or in a rare occasion) you were disconnected due to an internal server error. Rather than rejecting your submission, we want to pay you for your time, so we kindly ask that you return the study on Prolific by clicking <a href="https://app.prolific.com/submissions/complete?cc=C81W2SUC" style="color: blue; text-decoration: underline; font-weight: bold;">this link</a>. There is no need to contact the researcher. '
-        playerCount: 3
+        playerCount: 2
         readRoleTime: 300
-        roleDataURL: https://raw.githubusercontent.com/SamQuinto/Describing-Search-in-Negotiations/refs/heads/main/shared_office_3p_easy.json
-        yesAgreementEndingMessage: 'You have successfully reached an agreement. Please click <a href="https://app.prolific.com/submissions/complete?cc=C83N47RI" style="color: blue; text-decoration: underline; font-weight: bold;">this link</a> to complete the task on Prolific and claim your bonus payment. There is no need to contact the researcher. '
-    - name: 3-party-hard
-      factors:
-        batchFullEndingMessage: 'Unfortunately, there are too many people interested in the study and all study slots have been taken for now. Rather than rejecting your submission, we want to pay you partially for your time, so we kindly ask that you return the study on Prolific by clicking <a href="https://app.prolific.com/submissions/complete?cc=CNUVAKO5" style="color: blue; text-decoration: underline; font-weight: bold;">this link</a>. There is no need to contact the researcher. '
-        gameTerminatedEndingMessage: 'The game ended prematurely because the study window ended or an error occurred. Rather than rejecting your submission, we want to pay you partially for the time and work you have completed, so we kindly ask that you return the study on Prolific by clicking <a href="https://app.prolific.com/submissions/complete?cc=CYHATDNN" style="color: blue; text-decoration: underline; font-weight: bold;">this link</a>. There is no need to contact the researcher.'
-        negotiateTime: 7200
-        noAgreementEndingMessage: 'You did not reach an agreement. You will receive the base payment in full, but your bonus payment is £0. To complete the task and claim your payment, please click <a href="https://app.prolific.com/submissions/complete?cc=C1G07N5A" style="color: blue; text-decoration: underline; font-weight: bold;">this link</a> to be redirected to Prolific. There is no need to contact the researcher. '
-        noGameEndingMessage: 'We’re sorry, but we were unable to match you with other participants in time (or in a rare occasion) you were disconnected due to an internal server error. Rather than rejecting your submission, we want to pay you for your time, so we kindly ask that you return the study on Prolific by clicking <a href="https://app.prolific.com/submissions/complete?cc=C81W2SUC" style="color: blue; text-decoration: underline; font-weight: bold;">this link</a>. There is no need to contact the researcher. '
-        playerCount: 3
-        readRoleTime: 300
-        roleDataURL: https://raw.githubusercontent.com/SamQuinto/Describing-Search-in-Negotiations/refs/heads/main/shared_office_3p_hard.json
+        roleDataURL: https://raw.githubusercontent.com/joshua-a-becker/creative-negotiation/main/roles/candidate_role.json,https://raw.githubusercontent.com/joshua-a-becker/creative-negotiation/main/roles/recruiter_role.json
         yesAgreementEndingMessage: 'You have successfully reached an agreement. Please click <a href="https://app.prolific.com/submissions/complete?cc=C83N47RI" style="color: blue; text-decoration: underline; font-weight: bold;">this link</a> to complete the task on Prolific and claim your bonus payment. There is no need to contact the researcher. '
