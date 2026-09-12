@@ -19,7 +19,7 @@ factors:
         - value: 600
     - name: roleDataURL
       values:
-        - value: https://raw.githubusercontent.com/joshua-a-becker/creative-negotiation/main/roles/candidate_role.json,https://raw.githubusercontent.com/joshua-a-becker/creative-negotiation/main/roles/recruiter_role.json
+        - value: https://raw.githubusercontent.com/joshua-a-becker/creative-negotiation/main/roles/candidate_recruiter_roles.json
         - value: https://raw.githubusercontent.com/SamQuinto/Describing-Search-in-Negotiations/refs/heads/main/shared_office_3p_easy.json
         - value: https://raw.githubusercontent.com/SamQuinto/Describing-Search-in-Negotiations/refs/heads/main/shared_office_3p_hard.json
     - name: noAgreementEndingMessage
@@ -63,5 +63,5 @@ treatments:
         noGameEndingMessage: 'We’re sorry, but we were unable to match you with other participants in time (or in a rare occasion) you were disconnected due to an internal server error. Rather than rejecting your submission, we want to pay you for your time, so we kindly ask that you return the study on Prolific by clicking <a href="https://app.prolific.com/submissions/complete?cc=C81W2SUC" style="color: blue; text-decoration: underline; font-weight: bold;">this link</a>. There is no need to contact the researcher. '
         playerCount: 2
         readRoleTime: 300
-        roleDataURL: https://raw.githubusercontent.com/joshua-a-becker/creative-negotiation/main/roles/candidate_role.json,https://raw.githubusercontent.com/joshua-a-becker/creative-negotiation/main/roles/recruiter_role.json
+        roleDataURL: https://raw.githubusercontent.com/joshua-a-becker/creative-negotiation/main/roles/candidate_recruiter_roles.json
         yesAgreementEndingMessage: 'You have successfully reached an agreement. Please click <a href="https://app.prolific.com/submissions/complete?cc=C83N47RI" style="color: blue; text-decoration: underline; font-weight: bold;">this link</a> to complete the task on Prolific and claim your bonus payment. There is no need to contact the researcher. '
