@@ -26,7 +26,9 @@ export const Empirica = new ClassicListenersCollector();
 // ============================================================================
 
 const SCORER_ENABLED = process.env.SCORER_MOCK !== "1";
-const SCORER_TIMEOUT_MS = 45000;
+// The scorer makes one or two LLM calls (~6-10 s normally); allow for a slow
+// API before giving up. The client waits a little longer than this.
+const SCORER_TIMEOUT_MS = 90000;
 
 // Where score_offer.py lives. The scorer is NOT part of the Empirica bundle
 // (`empirica bundle` packs only .empirica/, server/dist and client/dist, and
@@ -85,13 +87,21 @@ function runPythonScorer({ text, role, previousText, issueSpace, scenarioFile })
     if (scenarioFile) args.push("--scenario-file", scenarioFile);
     const space = issueSpace || process.env.SCORER_ISSUE_SPACE;
     if (space) args.push("--issue-space", space);
+    const started = Date.now();
     execFile(
       process.env.SCORER_PYTHON || "python3",
       args,
       { timeout: SCORER_TIMEOUT_MS, maxBuffer: 4 * 1024 * 1024, env: process.env },
       (err, stdout, stderr) => {
         if (err) {
-          reject(new Error(stderr?.trim() || err.message));
+          const elapsed = Date.now() - started;
+          const detail = err.killed || err.signal
+            ? `killed by ${err.signal || "timeout"} after ${elapsed}ms (limit ${SCORER_TIMEOUT_MS}ms)`
+            : `exit code ${err.code} after ${elapsed}ms`;
+          const out = String(stdout || "").trim().slice(-300);
+          const errText = String(stderr || "").trim().slice(-600);
+          console.error(`[scorer] python failed: ${detail}${errText ? `\n  stderr: ${errText}` : ""}${out ? `\n  stdout: ${out}` : ""}`);
+          reject(new Error(errText || `Scorer ${detail}${out ? `: ${out}` : ""}`));
           return;
         }
         try {

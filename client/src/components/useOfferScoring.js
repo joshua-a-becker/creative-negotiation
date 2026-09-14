@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { usePlayer } from "@empirica/core/player/classic/react";
 
 // How long to wait for the server-side scorer before showing an error.
-const SCORE_TIMEOUT_MS = 60000;
+const SCORE_TIMEOUT_MS = 100000; // a bit longer than the server-side scorer limit
 
 // Free-text offer scoring, kept as a chat-like vector on the player:
 //   player.calculateHistory = [ {kind:"request"}, {kind:"response"}, … ]
