@@ -2,7 +2,6 @@ import {
   usePlayer,
   usePlayers,
   useStage,
-  useGame,
 } from "@empirica/core/player/classic/react";
 import { Loading } from "@empirica/core/player/react";
 import React, { useContext, useEffect } from "react";
@@ -16,7 +15,6 @@ export function Stage({ profileComponent }) {
   const player = usePlayer();
   const players = usePlayers();
   const stage = useStage();
-  const game = useGame();
   const { teardownCall } = useContext(DailyCallContext);
 
   const stageName = stage.get("name");
@@ -31,13 +29,6 @@ export function Stage({ profileComponent }) {
   useEffect(() => {
     if (isPrepStage) teardownCall();
   }, [isPrepStage, teardownCall]);
-
-  // Force submit if game was force-quit
-  useEffect(() => {
-    if (game.get("forceQuit") === true && !player.stage.get("submit")) {
-      player.stage.set("submit", true);
-    }
-  }, [game.get("forceQuit"), player]);
 
   // Heartbeat: append a timestamp every 60 seconds
   useEffect(() => {

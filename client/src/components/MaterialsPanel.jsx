@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { RoleNarrative } from "./RoleNarrative";
 import { usePlayer, useStage, useRound, useGame } from "@empirica/core/player/classic/react";
 import { DailyCallContext } from "../App";
@@ -12,11 +12,6 @@ import {
   submitErrorMessage,
   formatValue,
 } from "./negotiationDisplay";
-
-const QUIT_COUNTDOWN_SECONDS = 15;
-// Extra time non-initiators wait past zero before force-ending the game themselves,
-// covering clock skew between clients and an initiator who disconnected mid-countdown.
-const QUIT_GRACE_SECONDS = 5;
 
 export function MaterialsPanel({
   roleName,
@@ -32,11 +27,8 @@ export function MaterialsPanel({
   const round = useRound();
   const game = useGame();
   const { playerCount } = game.get("treatment");
-  const tips = game.get("tips") || "";
 
   const threshold = batnaThreshold(roleRP);
-
-  const [activeTab, setActiveTab] = useState("proposals");
 
   // Free-text proposal + scorer round trip (see useOfferScoring).
   const history = round.get("proposalHistory") || [];
@@ -49,9 +41,6 @@ export function MaterialsPanel({
   const [showNegativePointsModal, setShowNegativePointsModal] = useState(false);
   const [showBlankProposalModal, setShowBlankProposalModal] = useState(false);
   const [submitErrorMsg, setSubmitErrorMsg] = useState("");
-  const [showQuitModal, setShowQuitModal] = useState(false);
-  const [showQuitConfirmModal, setShowQuitConfirmModal] = useState(false);
-  const [quitSecondsLeft, setQuitSecondsLeft] = useState(QUIT_COUNTDOWN_SECONDS);
 
   const { setMediaLocked } = useContext(DailyCallContext);
 
@@ -63,7 +52,7 @@ export function MaterialsPanel({
   const WELCOME_LOCK_SECONDS = 3;
   const [welcomeSecondsLeft, setWelcomeSecondsLeft] = useState(WELCOME_LOCK_SECONDS);
 
-  const [flashProposalTab, setFlashProposalTab] = useState(false);
+  const proposalsColumnRef = useRef(null);
   const [wiggleStoppedId, setWiggleStoppedId] = useState(null); // proposal id whose wiggle the user interrupted
 
   // Compute proposal state from vote counts (derived state, no useEffect needed)
@@ -138,38 +127,6 @@ export function MaterialsPanel({
     }
   }, [currentProposal?.finalVotes, playerCount, player]);
 
-  // Impasse countdown: driven by shared game state so every participant sees it.
-  // Each client counts down locally from quitRequest.startedAt — no per-second server writes.
-  const quitRequest = game.get("quitRequest");
-  useEffect(() => {
-    if (!quitRequest) {
-      setQuitSecondsLeft(QUIT_COUNTDOWN_SECONDS);
-      return;
-    }
-
-    const tick = () => {
-      const elapsed = (Date.now() - quitRequest.startedAt) / 1000;
-      const remaining = Math.max(0, QUIT_COUNTDOWN_SECONDS - Math.floor(elapsed));
-      setQuitSecondsLeft(remaining);
-
-      if (game.get("forceQuit")) return;
-
-      const isInitiator = quitRequest.by === player.id;
-      const deadline = isInitiator
-        ? QUIT_COUNTDOWN_SECONDS
-        : QUIT_COUNTDOWN_SECONDS + QUIT_GRACE_SECONDS;
-
-      if (elapsed >= deadline) {
-        game.set("forceQuitBy", quitRequest.by);
-        game.set("forceQuit", true);
-      }
-    };
-
-    tick();
-    const timer = setInterval(tick, 1000);
-    return () => clearInterval(timer);
-  }, [quitRequest?.startedAt, quitRequest?.by, player.id]);
-
   // Count down the "Let's Go!" lock while the welcome modal is open.
   useEffect(() => {
     if (!showWelcomeModal || welcomeSecondsLeft <= 0) return;
@@ -185,26 +142,6 @@ export function MaterialsPanel({
     setMediaLocked(showWelcomeModal);
     return () => setMediaLocked(false);
   }, [showWelcomeModal, setMediaLocked]);
-
-  // Flash the Proposals tab when there's a pending proposal
-  useEffect(() => {
-    if (pendingProposal && activeTab !== "proposals") {
-      const interval = setInterval(() => {
-        setFlashProposalTab(prev => !prev);
-      }, 1000); // Flash every second
-
-      return () => clearInterval(interval);
-    } else {
-      setFlashProposalTab(false);
-    }
-  }, [pendingProposal, activeTab]);
-
-  // Handle tab change
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    // Scroll to top of page
-    window.scrollTo(0, 0);
-  };
 
   // Viewer descriptor for value lookups on stored proposals.
   const viewerFor = (proposal) => ({ roleName, isProposer: proposal?.submittedBy === player.id });
@@ -257,7 +194,8 @@ export function MaterialsPanel({
   // Handle modifying a past proposal (load its text back into the calculator)
   const handleModifyProposal = (proposal) => {
     setOfferText(proposal.text || "");
-    handleTabChange("proposals");
+    // The calculator sits at the top of the proposals column.
+    proposalsColumnRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Handle finalize decision (finalize or continue)
@@ -291,71 +229,26 @@ export function MaterialsPanel({
   };
 
   return (
-    <div className="w-full bg-gray-300 p-6 flex flex-col relative min-h-screen">
+    <div className="w-full h-full bg-gray-300 p-6 flex flex-col relative overflow-hidden">
       {/* Bottom fade overlay */}
-      <div className="fixed left-0 bottom-0 w-[70%] h-12 bg-gradient-to-t from-gray-300 to-transparent pointer-events-none z-10"></div>
+      <div className="fixed left-0 bottom-0 w-[82%] h-12 bg-gradient-to-t from-gray-300 to-transparent pointer-events-none z-10"></div>
 
-      {/* Tab Navigation - cleaner style with all-around borders */}
-      <div className="flex gap-2 mb-2">
-        <button
-          onClick={() => handleTabChange("narrative")}
-          className={`px-4 py-2 rounded font-medium transition-all border ${
-            activeTab === "narrative"
-              ? "bg-white text-blue-600 border-blue-400 shadow"
-              : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50 hover:border-gray-400"
-          }`}
-        >
-          Narrative
-        </button>
-        <button
-          onClick={() => handleTabChange("proposals")}
-          className={`px-4 py-2 rounded font-medium transition-all border ${
-            activeTab === "proposals"
-              ? "bg-white text-blue-600 border-blue-400 shadow"
-              : pendingProposal && flashProposalTab
-              ? "bg-red-100 text-red-700 border-red-400 shadow-md"
-              : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50 hover:border-gray-400"
-          }`}
-        >
-          Proposals
-          {pendingProposal && (
-            <span className="ml-2 inline-flex items-center justify-center w-2 h-2 bg-red-500 rounded-full"></span>
-          )}
-        </button>
-        <button
-          onClick={() => handleTabChange("tips")}
-          className={`px-4 py-2 rounded font-medium transition-all border ${
-            activeTab === "tips"
-              ? "bg-white text-blue-600 border-blue-400 shadow"
-              : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50 hover:border-gray-400"
-          }`}
-        >
-          Tips
-        </button>
-        <button
-          onClick={() => setShowQuitModal(true)}
-          className="px-4 py-2 rounded font-medium transition-all border bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200 hover:border-gray-400"
-        >
-          Impasse
-        </button>
-      </div>
-
-      {/* Tab Content */}
-      <div className="flex-1">
-        {activeTab === "narrative" && (
-          <div className="space-y-4">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Your Role
-              </h3>
-              <div className="prose prose-gray max-w-none text-gray-700 leading-relaxed">
-                <RoleNarrative>{roleNarrative}</RoleNarrative>
-              </div>
+      {/* Two columns: narrative on the left, proposals on the right */}
+      <div className="flex-1 min-h-0 flex gap-4">
+        {/* Narrative column (scrolls independently) */}
+        <div className="w-1/2 min-w-0 h-full overflow-y-auto pb-12">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              Your Role
+            </h3>
+            <div className="prose prose-gray max-w-none text-gray-700 leading-snug prose-p:my-2 prose-li:my-0.5 prose-headings:my-3">
+              <RoleNarrative>{roleNarrative}</RoleNarrative>
             </div>
           </div>
-        )}
+        </div>
 
-        {activeTab === "proposals" && (
+        {/* Proposals column (scrolls independently) */}
+        <div ref={proposalsColumnRef} className="w-1/2 min-w-0 h-full overflow-y-auto pb-12">
           <div className="space-y-4">
             {/* BATNA Card */}
             <div className="bg-white rounded-lg shadow-sm p-4">
@@ -365,9 +258,6 @@ export function MaterialsPanel({
               {roleBATNA && (
                 <p className="text-sm text-gray-700 mb-1">{roleBATNA}</p>
               )}
-              <p className="text-sm text-gray-700">
-                If you don't reach agreement, you will earn <span className="font-bold">{threshold} value</span>.
-              </p>
             </div>
 
             {/* Main Scoring Area (free text → scorer) */}
@@ -548,18 +438,7 @@ export function MaterialsPanel({
               </div>
             )}
           </div>
-        )}
-
-        {activeTab === "tips" && (
-          <div className="space-y-4">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Tips on Negotiation
-              </h3>
-              <div className="prose prose-gray max-w-none" dangerouslySetInnerHTML={{ __html: tips }} />
-            </div>
-          </div>
-        )}
+        </div>
       </div>
 
       {/* Finalize Modal - Popup */}
@@ -709,116 +588,6 @@ export function MaterialsPanel({
         </div>
       )}
 
-      {/* Impasse Modal - Step 1 */}
-      {showQuitModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full mx-4">
-            <div className="text-center mb-6">
-              <div className="text-6xl mb-4">⚠️</div>
-              <h3 className="text-2xl font-bold text-red-600 mb-3">
-                Are you sure you want to declare an impasse?
-              </h3>
-              <p className="text-lg text-gray-700">
-                This will end the negotiation for everybody without an agreement. You should talk this through with the other players before declaring an impasse.
-              </p>
-            </div>
-            <div className="flex flex-col gap-3">
-              <button
-                onClick={() => setShowQuitModal(false)}
-                className="w-full px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold"
-              >
-                Return to Negotiation
-              </button>
-              <button
-                onClick={() => {
-                  setShowQuitModal(false);
-                  setShowQuitConfirmModal(true);
-                }}
-                className="w-full px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold"
-              >
-                End Negotiation for Everyone
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Impasse Confirm Modal - Step 2 */}
-      {showQuitConfirmModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full mx-4">
-            <div className="text-center mb-6">
-              <div className="text-6xl mb-4">⚠️</div>
-              <h3 className="text-2xl font-bold text-red-600 mb-3">
-                Are you sure?
-              </h3>
-              <p className="text-lg text-gray-700">
-                Ending the negotiation now will end it for everybody.
-              </p>
-            </div>
-            <div className="flex flex-col gap-3">
-              <button
-                onClick={() => setShowQuitConfirmModal(false)}
-                className="w-full px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold"
-              >
-                Return to Negotiation
-              </button>
-              <button
-                onClick={() => {
-                  setShowQuitConfirmModal(false);
-                  const now = Date.now();
-                  const byName = player.get("displayName") || player.id;
-                  const quitLog = game.get("quitLog") || [];
-                  game.set("quitLog", [...quitLog, { event: "initiated", by: player.id, byName, timestamp: now }]);
-                  game.set("quitRequest", { by: player.id, byName, startedAt: now });
-                }}
-                className="w-full px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold"
-              >
-                End Negotiation for Everyone
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Impasse Countdown Modal - Step 3 (shared: shown to all participants) */}
-      {quitRequest && !game.get("forceQuit") && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full mx-4">
-            <div className="text-center mb-6">
-              <div className="text-6xl mb-4">⏳</div>
-              {quitRequest.by === player.id ? (
-                <h3 className="text-2xl font-bold text-red-600 mb-3">
-                  The negotiation will end in {quitSecondsLeft} second{quitSecondsLeft !== 1 ? 's' : ''}
-                </h3>
-              ) : (
-                <>
-                  <h3 className="text-2xl font-bold text-red-600 mb-3">
-                    {quitRequest.byName} has declared an impasse
-                  </h3>
-                  <p className="text-lg text-gray-700">
-                    The negotiation will end in {quitSecondsLeft} second{quitSecondsLeft !== 1 ? 's' : ''} unless {quitRequest.byName} cancels.
-                  </p>
-                </>
-              )}
-            </div>
-            {quitRequest.by === player.id && (
-              <button
-                onClick={() => {
-                  const now = Date.now();
-                  const quitLog = game.get("quitLog") || [];
-                  game.set("quitLog", [...quitLog, { event: "canceled", by: player.id, byName: quitRequest.byName, timestamp: now }]);
-                  game.set("quitRequest", null);
-                }}
-                className="w-full px-6 py-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-bold text-lg"
-              >
-                Cancel — Continue Negotiation
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Welcome Modal */}
       {showWelcomeModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -830,10 +599,7 @@ export function MaterialsPanel({
               </h3>
               <div className="text-left text-gray-700 leading-relaxed space-y-3">
                 <p className="text-red-600 text-opacity-80 font-semibold">
-                  To <strong>submit</strong> a proposal, describe it in your own words in the Proposals tab, click "Calculate" to see its value, then click "Submit Proposal".
-                </p>
-                <p>
-                  <strong>To end the negotiation without an agreement, click "impasse."</strong>
+                  To <strong>submit</strong> a proposal, describe it in your own words under Proposals, click "Calculate" to see its value, then click "Submit Proposal".
                 </p>
               </div>
             </div>

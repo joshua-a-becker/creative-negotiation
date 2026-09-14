@@ -14,7 +14,6 @@ import { Demo } from './intro-exit/Demo.jsx';
 import { Instructions } from './intro-exit/Instructions.jsx';
 import { AttentionCheck } from './intro-exit/AttentionCheck.jsx';
 import { NegotiationOutcome } from './intro-exit/NegotiationOutcome.jsx';
-import { ForceQuitExitStep } from './intro-exit/ForceQuitExitStep.jsx';
 import { BatchFullExitStep } from './intro-exit/BatchFullExitStep.jsx';
 import {FollowupQuestion} from './intro-exit/FollowupQuestion.jsx';
 import DailyIframe from "@daily-co/daily-js";
@@ -180,16 +179,7 @@ export default function App() {
       return [NoGameExitStep];
     }
 
-    const exitSteps = []
-
-
-    if (game?.get("forceQuit") === true) {
-      exitSteps.push(ForceQuitExitStep);
-    }
-
-    exitSteps.push(FollowupQuestion, NegotiationOutcome)
-
-    return(exitSteps)
+    return [FollowupQuestion, NegotiationOutcome];
   }
   
 
