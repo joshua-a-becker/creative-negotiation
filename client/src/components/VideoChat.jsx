@@ -4,21 +4,73 @@ import { DailyCallContext } from "../App";
 import { VolumeX, MicOff, VideoOff, Video } from "lucide-react";
 import { getTrackedUserMedia } from "../mediaTracks";
 
+// Every video tile is a square of the same size, local and remote alike: as
+// large as the tile allows, capped at 85% of the column width (leaving a margin
+// on either side) and by the tile height
+// minus the name line beneath it. The tile is a CSS size container so the
+// square can read its height via cqh. The <video> fills the square with
+// object-cover, so a camera that is off (no intrinsic size) is no different
+// from one that is on.
+const TILE_STYLE = { containerType: "size" };
+const SQUARE_STYLE = { width: "min(85%, calc(100cqh - 2.5rem))" };
+
+// Mic + camera toggles. Rendered over the self-view when it is shown, and in
+// the collapsed bar when the self-view is hidden, so the camera can be turned
+// off without first un-hiding the preview.
+function MediaToggles({ isAudioEnabled, isVideoEnabled, onToggleAudio, onToggleVideo }) {
+  return (
+    <div className="flex gap-2">
+      {/* Microphone toggle */}
+      <button
+        onClick={onToggleAudio}
+        className={`p-2 rounded-full ${isAudioEnabled ? 'bg-gray-700 hover:bg-gray-600' : 'bg-red-600 hover:bg-red-500'} text-white transition-colors`}
+        title={isAudioEnabled ? "Mute microphone" : "Unmute microphone"}
+      >
+        {isAudioEnabled ? (
+          // Microphone icon
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
+          </svg>
+        ) : (
+          // Microphone muted icon
+          <MicOff className="h-5 w-5 text-white" />
+        )}
+      </button>
+
+      {/* Camera toggle */}
+      <button
+        onClick={onToggleVideo}
+        className={`p-2 rounded-full ${isVideoEnabled ? 'bg-gray-700 hover:bg-gray-600' : 'bg-red-600 hover:bg-red-500'} text-white transition-colors`}
+        title={isVideoEnabled ? "Turn off camera" : "Turn on camera"}
+      >
+        {isVideoEnabled ? (
+          // Video camera icon
+          <Video className="h-5 w-5 text-white" />
+        ) : (
+          // Video camera off icon
+          <VideoOff className="h-5 w-5 text-white" />
+        )}
+      </button>
+    </div>
+  );
+}
+
 // Memoized components outside the main component to prevent recreation
 const LocalVideoComponent = React.memo(({ localVideoRef, displayName, isHidden, onToggleHide, isAudioEnabled, isVideoEnabled, onToggleAudio, onToggleVideo }) => {
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center py-1">
-      <div className="flex flex-col items-center max-h-full relative">
-        {/* Video container with controls */}
-        <div className="relative max-w-full max-h-[75%]">
+    <div className="w-full h-full flex flex-col items-center justify-center py-1" style={TILE_STYLE}>
+      <div className="w-full flex flex-col items-center max-h-full relative">
+        {/* Video container with controls. Collapsed (not unmounted) while hidden so
+            the Daily.co stream stays attached. */}
+        <div className={isHidden ? "hidden" : "relative aspect-square shrink-0"} style={SQUARE_STYLE}>
           {/* Video element - ALWAYS rendered for Daily.co stream continuity */}
           <video
             ref={localVideoRef}
             autoPlay
             muted
             playsInline
-            className={isHidden ? 'hidden' : 'w-full h-full border border-black rounded object-cover'}
+            className="w-full h-full border border-black rounded object-cover"
           />
 
           {/* Camera Off Overlay - shown when camera is disabled */}
@@ -34,38 +86,13 @@ const LocalVideoComponent = React.memo(({ localVideoRef, displayName, isHidden, 
 
           {/* Audio/Video toggle buttons - positioned at bottom center inside video */}
           {!isHidden && (
-            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
-            {/* Microphone toggle */}
-            <button
-              onClick={onToggleAudio}
-              className={`p-2 rounded-full ${isAudioEnabled ? 'bg-gray-700 hover:bg-gray-600' : 'bg-red-600 hover:bg-red-500'} text-white transition-colors`}
-              title={isAudioEnabled ? "Mute microphone" : "Unmute microphone"}
-            >
-              {isAudioEnabled ? (
-                // Microphone icon
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
-                </svg>
-              ) : (
-                // Microphone muted icon
-                <MicOff className="h-5 w-5 text-white" />
-              )}
-            </button>
-
-            {/* Camera toggle */}
-            <button
-              onClick={onToggleVideo}
-              className={`p-2 rounded-full ${isVideoEnabled ? 'bg-gray-700 hover:bg-gray-600' : 'bg-red-600 hover:bg-red-500'} text-white transition-colors`}
-              title={isVideoEnabled ? "Turn off camera" : "Turn on camera"}
-            >
-              {isVideoEnabled ? (
-                // Video camera icon
-                <Video className="h-5 w-5 text-white" />
-              ) : (
-                // Video camera off icon
-                <VideoOff className="h-5 w-5 text-white" />
-              )}
-            </button>
+            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
+              <MediaToggles
+                isAudioEnabled={isAudioEnabled}
+                isVideoEnabled={isVideoEnabled}
+                onToggleAudio={onToggleAudio}
+                onToggleVideo={onToggleVideo}
+              />
             </div>
           )}
         </div>
@@ -73,8 +100,13 @@ const LocalVideoComponent = React.memo(({ localVideoRef, displayName, isHidden, 
         {isHidden && (
           <>
             <div className="w-full mb-2 border border-black"> 
-              <div className="bg-gray-200 border border-gray-400 rounded px-3 py-1 flex items-center justify-center gap-2"> 
-                <span style={{color:"red"}}>Recording ●</span>
+              <div className="bg-gray-200 border border-gray-400 rounded px-3 py-1 flex items-center justify-center gap-3">
+                <MediaToggles
+                  isAudioEnabled={isAudioEnabled}
+                  isVideoEnabled={isVideoEnabled}
+                  onToggleAudio={onToggleAudio}
+                  onToggleVideo={onToggleVideo}
+                />
                 <button
                   onClick={onToggleHide}
                   className="text-gray-600 hover:text-black cursor-pointer"
@@ -176,15 +208,15 @@ const RemoteVideoComponent = React.memo(({ stream, name, sessionId, onRequestRef
 
 
   return (
-    <div className="flex flex-col h-full items-center justify-center py-1">
-      <div className="flex flex-col items-center max-h-full">
+    <div className="w-full h-full flex flex-col items-center justify-center py-1" style={TILE_STYLE}>
+      <div className="w-full flex flex-col items-center max-h-full">
         {/* Video container with overlays */}
-        <div className="relative max-w-full max-h-[75%]">
+        <div className="relative aspect-square shrink-0" style={SQUARE_STYLE}>
           <video
             ref={ref}
             autoPlay
             playsInline
-            className="max-w-full max-h-full w-auto h-auto border border-blue-500 rounded object-cover"
+            className="w-full h-full border border-blue-500 rounded object-cover"
           />
 
           {/* Camera Off Overlay */}
