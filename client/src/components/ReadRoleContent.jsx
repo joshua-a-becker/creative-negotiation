@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { usePlayer, useGame } from "@empirica/core/player/classic/react";
 import { RoleNarrative } from "./RoleNarrative";
 import { ScoringCalculator } from "./negotiationDisplay";
+import { isTableMode, TableScoringCalculator } from "./tableScoring";
 import { useOfferScoring } from "./useOfferScoring";
 import { NotesBox } from "./NotesBox";
 
@@ -13,6 +14,9 @@ export function ReadRoleContent({ profileComponent }) {
   const roleNarrative = player.get("roleNarrative");
   const roleBATNA = player.get("roleBATNA");
   const roleRP = player.get("roleRP");
+  const tableMode = isTableMode(game.get("treatment"));
+  const roleScoresheet = player.get("roleScoresheet");
+  const [selection, setSelection] = useState({}); // table-mode practice calculator
   const [showFade, setShowFade] = useState(false);
   const [moreBelow, setMoreBelow] = useState(false);
   const { offerText, setOfferText, calculating, scoreResult, calculate } = useOfferScoring({ role: roleName });
@@ -32,7 +36,7 @@ export function ReadRoleContent({ profileComponent }) {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleScroll);
     };
-  }, [roleNarrative, tips, scoreResult, calculating]);
+  }, [roleNarrative, tips, scoreResult, calculating, selection]);
 
   if (!roleName || !roleNarrative) {
     return (
@@ -117,18 +121,28 @@ export function ReadRoleContent({ profileComponent }) {
             </div>
           )*/}
 
-          {/* 3. Practice scoring: try offers in your own words, see their value */}
-          <ScoringCalculator
-            title="Scoring Calculator"
-            text={offerText}
-            onTextChange={setOfferText}
-            onCalculate={calculate}
-            calculating={calculating}
-            result={scoreResult}
-            roleRP={roleRP}
-            roleName={roleName}
-            emptyMessage="Try out an offer to see what it would be worth to you. Nothing you type here is shared with the other side."
-          />
+          {/* 3. Practice scoring: try offers, see their value */}
+          {tableMode ? (
+            <TableScoringCalculator
+              title="Scoring Calculator"
+              roleScoresheet={roleScoresheet}
+              selection={selection}
+              onSelectionChange={setSelection}
+              roleRP={roleRP}
+            />
+          ) : (
+            <ScoringCalculator
+              title="Scoring Calculator"
+              text={offerText}
+              onTextChange={setOfferText}
+              onCalculate={calculate}
+              calculating={calculating}
+              result={scoreResult}
+              roleRP={roleRP}
+              roleName={roleName}
+              emptyMessage="Try out an offer to see what it would be worth to you. Nothing you type here is shared with the other side."
+            />
+          )}
 
           {/* 4. Tips on Negotiation Section */}
           <div className="bg-white rounded-lg shadow-md p-6">

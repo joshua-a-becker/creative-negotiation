@@ -13,6 +13,14 @@ import {
   submitErrorMessage,
   formatValue,
 } from "./negotiationDisplay";
+import {
+  isTableMode,
+  tableComplete,
+  tableValue,
+  buildTableOptions,
+  TableScoringCalculator,
+  TableProposalDetails,
+} from "./tableScoring";
 
 export function MaterialsPanel({
   roleName,
@@ -27,6 +35,12 @@ export function MaterialsPanel({
   const { playerCount, experimentalTreatmentText } = game.get("treatment");
 
   const threshold = batnaThreshold(roleRP);
+
+  // Scoring mode: "table" = pick one option per issue from the role's payoff
+  // table (tableScoring.jsx); otherwise free text scored by the python scorer.
+  const tableMode = isTableMode(game.get("treatment"));
+  const roleScoresheet = player.get("roleScoresheet");
+  const [selection, setSelection] = useState({}); // table mode: { issue: optionIndex }
 
   // Free-text proposal + scorer round trip (see useOfferScoring).
   const history = round.get("proposalHistory") || [];
@@ -160,16 +174,39 @@ export function MaterialsPanel({
   // Viewer descriptor for value lookups on stored proposals.
   const viewerFor = (proposal) => ({ roleName, isProposer: proposal?.submittedBy === player.id });
 
+  // Value of a stored proposal to this player (null when it has none).
+  const valueOf = (proposal) => {
+    if (!proposal) return null;
+    return tableMode
+      ? tableValue(roleScoresheet, proposal.options)
+      : proposalValue(proposal, viewerFor(proposal));
+  };
+
+  const submittable = tableMode
+    ? tableComplete(roleScoresheet, selection)
+    : canSubmit(scoreResult, offerText);
+
+  const renderProposalDetails = (proposal, small = false) =>
+    tableMode ? (
+      <TableProposalDetails roleScoresheet={roleScoresheet} proposal={proposal} small={small} />
+    ) : (
+      <ProposalDetails proposal={proposal} viewer={viewerFor(proposal)} small={small} />
+    );
+
   // Handle proposal submission
   const handleSubmitProposal = () => {
-    if (!canSubmit(scoreResult, offerText)) {
-      setSubmitErrorMsg(submitErrorMessage(scoreResult, offerText));
+    if (!submittable) {
+      setSubmitErrorMsg(tableMode
+        ? "You must choose an option for every issue."
+        : submitErrorMessage(scoreResult, offerText));
       setShowBlankProposalModal(true);
       return;
     }
 
     // Same rule as voting: you can't put forward a deal worth negative value to you.
-    const ownValue = proposalValue(scoreResult, { roleName, isProposer: true });
+    const ownValue = tableMode
+      ? tableValue(roleScoresheet, selection)
+      : proposalValue(scoreResult, { roleName, isProposer: true });
     if (ownValue !== null && ownValue < 0) {
       setNegativeValueAction("submit");
       return;
@@ -181,8 +218,9 @@ export function MaterialsPanel({
       submittedByName: player.get("displayName") || player.id,
       submittedByRole: roleName,
       timestamp: Date.now(),
-      text: scoreResult.text,
-      score: scoreResult.score,
+      ...(tableMode
+        ? { options: buildTableOptions(roleScoresheet, selection) }
+        : { text: scoreResult.text, score: scoreResult.score }),
       // Proposer automatically votes "accept" on their own proposal.
       initialVotes: { [player.id]: "accept" },
       finalVotes: {},
@@ -196,7 +234,7 @@ export function MaterialsPanel({
     // If voting "accept", check the proposal isn't worth negative value to you.
     if (vote === "accept") {
       const proposal = history.find(p => p.id === proposalId);
-      const value = proposal ? proposalValue(proposal, viewerFor(proposal)) : null;
+      const value = valueOf(proposal);
       if (value !== null && value < 0) {
         setNegativeValueAction("accept");
         return;
@@ -213,9 +251,10 @@ export function MaterialsPanel({
     round.set("proposalHistory", updatedHistory);
   };
 
-  // Handle modifying a past proposal (load its text back into the calculator)
+  // Handle modifying a past proposal (load its terms back into the calculator)
   const handleModifyProposal = (proposal) => {
-    setOfferText(proposal.text || "");
+    if (tableMode) setSelection({ ...(proposal.options || {}) });
+    else setOfferText(proposal.text || "");
     // The calculator sits at the top of the proposals column.
     proposalsColumnRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -313,29 +352,42 @@ export function MaterialsPanel({
               )}
             </div>
 
-            {/* Main Scoring Area (free text → scorer) */}
-            <ScoringCalculator
-              text={offerText}
-              onTextChange={setOfferText}
-              onCalculate={handleCalculate}
-              calculating={calculating}
-              result={scoreResult}
-              roleRP={roleRP}
-              roleName={roleName}
-              footer={
+            {/* Main Scoring Area: payoff table (table mode) or free text → scorer */}
+            {(() => {
+              const submitButton = (
                 <button
                   onClick={handleSubmitProposal}
-                  disabled={pendingProposal !== null || !canSubmit(scoreResult, offerText)}
+                  disabled={pendingProposal !== null || !submittable}
                   className={`inline-block px-4 py-2 rounded font-semibold transition-colors text-sm whitespace-nowrap ${
-                    pendingProposal !== null || !canSubmit(scoreResult, offerText)
+                    pendingProposal !== null || !submittable
                       ? "bg-gray-400 text-gray-200 cursor-not-allowed"
                       : "bg-green-600 text-white hover:bg-green-700"
                   }`}
                 >
                   {pendingProposal !== null ? "Proposal Pending" : "Submit Proposal"}
                 </button>
-              }
-            />
+              );
+              return tableMode ? (
+                <TableScoringCalculator
+                  roleScoresheet={roleScoresheet}
+                  selection={selection}
+                  onSelectionChange={setSelection}
+                  roleRP={roleRP}
+                  footer={submitButton}
+                />
+              ) : (
+                <ScoringCalculator
+                  text={offerText}
+                  onTextChange={setOfferText}
+                  onCalculate={handleCalculate}
+                  calculating={calculating}
+                  result={scoreResult}
+                  roleRP={roleRP}
+                  roleName={roleName}
+                  footer={submitButton}
+                />
+              );
+            })()}
 
             {/* Pending Proposal */}
             {pendingProposal ? (
@@ -355,7 +407,7 @@ export function MaterialsPanel({
                 </div>
 
                 {(() => {
-                  const value = proposalValue(pendingProposal, viewerFor(pendingProposal));
+                  const value = valueOf(pendingProposal);
 
                   return (
                     <div className="mb-2">
@@ -398,10 +450,7 @@ export function MaterialsPanel({
                       <div className="bg-blue-50 rounded p-4 flex gap-4 items-start">
                         <div className="flex-1 min-w-0">
                           <h4 className="text-sm font-bold text-gray-700 mb-2">Proposal Details:</h4>
-                          <ProposalDetails
-                            proposal={pendingProposal}
-                            viewer={viewerFor(pendingProposal)}
-                          />
+                          {renderProposalDetails(pendingProposal)}
                         </div>
                         <div className="shrink-0 text-center bg-white rounded p-3 border border-gray-300 min-w-[140px]">
                           <p className="text-sm text-gray-600 mb-1">Total value to you</p>
@@ -423,7 +472,11 @@ export function MaterialsPanel({
               </div>
             ) : (
               <div className="bg-white rounded-lg shadow-md p-6 text-center">
-                <p className="text-gray-500">No pending proposal. Describe an offer above, click Calculate, then Submit Proposal.</p>
+                <p className="text-gray-500">
+                  {tableMode
+                    ? "No pending proposal. Choose an option for every issue above, then Submit Proposal."
+                    : "No pending proposal. Describe an offer above, click Calculate, then Submit Proposal."}
+                </p>
               </div>
             )}
 
@@ -436,7 +489,7 @@ export function MaterialsPanel({
                 <div className="space-y-3">
                   {[...allHistoryProposals].reverse().map((proposal) => {
                     // Value for this player
-                    const value = proposalValue(proposal, viewerFor(proposal));
+                    const value = valueOf(proposal);
 
                     // Count yes votes (from initial votes)
                     const yesVotes = Object.values(proposal.initialVotes).filter(v => v === "accept").length;
@@ -464,11 +517,7 @@ export function MaterialsPanel({
                           {/* Proposal items list */}
                           <div className="flex-1">
                             <h5 className="text-xs font-bold text-gray-600 uppercase mb-2">Proposal:</h5>
-                            <ProposalDetails
-                              proposal={proposal}
-                              viewer={viewerFor(proposal)}
-                              small
-                            />
+                            {renderProposalDetails(proposal, true)}
                           </div>
 
                           {/* Vote count and value - more prominent */}
@@ -506,7 +555,7 @@ export function MaterialsPanel({
           <div className="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full mx-4">
             {/* Value for this player */}
             {(() => {
-              const value = proposalValue(acceptedPendingProposal, viewerFor(acceptedPendingProposal));
+              const value = valueOf(acceptedPendingProposal);
 
               const finalVoteCount = Object.keys(acceptedPendingProposal.finalVotes).length;
               const hasVoted = !!acceptedPendingProposal.finalVotes?.[player.id];
@@ -660,7 +709,9 @@ export function MaterialsPanel({
               </h3>
               <div className="text-left text-gray-700 leading-relaxed space-y-3">
                 <p className="text-red-600 text-opacity-80 font-semibold">
-                  To <strong>submit</strong> a proposal, describe it in your own words under Proposals, click "Calculate" to see its value, then click "Submit Proposal".
+                  {tableMode
+                    ? <>To <strong>submit</strong> a proposal, choose an option for every issue under Proposals, then click "Submit Proposal".</>
+                    : <>To <strong>submit</strong> a proposal, describe it in your own words under Proposals, click "Calculate" to see its value, then click "Submit Proposal".</>}
                 </p>
               </div>
             </div>

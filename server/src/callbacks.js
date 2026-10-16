@@ -321,8 +321,17 @@ Empirica.on("player", "calculateHistory", async (_ctx, { player, calculateHistor
 });
 
 // Value of a stored proposal to a given player, mirroring viewerScore() in
-// client/src/components/negotiationDisplay.jsx.
+// client/src/components/negotiationDisplay.jsx and, for table-mode proposals
+// ({ options: { issue: optionIndex } }), tableValue() in tableScoring.jsx.
 function proposalValueForPlayer(proposal, player) {
+  if (proposal?.options) {
+    const sheet = player.get("roleScoresheet") || {};
+    return Object.entries(sheet).reduce((sum, [issue, options]) => {
+      const idx = proposal.options[issue];
+      if (idx === undefined || idx === null) return sum;
+      return sum + (options?.[idx]?.score || 0);
+    }, 0);
+  }
   const score = proposal?.score;
   if (!score || score.decision !== "scorable") return null;
   const roleName = player.get("roleName");
@@ -509,6 +518,11 @@ Empirica.onGameStart(({ game }) => {
       player.set("roleNarrative", assignedRole.narrative);
       player.set("roleBATNA", assignedRole.BATNA);
       player.set("roleRP", assignedRole.RP);
+      // Payoff table for scoringMode: "table" (see client tableScoring.jsx).
+      player.set("roleScoresheet", assignedRole.determinatescoretable || null);
+      if (game.get("treatment")?.scoringMode === "table" && !assignedRole.determinatescoretable) {
+        console.warn(`scoringMode is "table" but role "${assignedRole.role_name}" has no determinatescoretable`);
+      }
       player.set("scorerRole", assignedRole.scorer_role || assignedRole.role_name);
       player.set("scorerScenarioFile", scorerScenarioFile);
       console.log(`Assigned role "${assignedRole.role_name}" to player ${player.id}`);
