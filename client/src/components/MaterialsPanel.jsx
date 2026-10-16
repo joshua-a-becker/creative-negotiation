@@ -21,6 +21,16 @@ import {
   TableProposalDetails,
 } from "./tableScoring";
 
+// Quit ("declare an impasse"), ported from workshop-app: after two
+// confirmations the initiator starts a shared countdown (game.quitRequest) that
+// every player sees and only the initiator can cancel. When it runs out,
+// game.forceQuit is set and Stage.jsx submits the stage for everyone — the
+// round ends with no agreement.
+const QUIT_COUNTDOWN_SECONDS = 15;
+// Extra time non-initiators wait past zero before force-ending the game themselves,
+// covering clock skew between clients and an initiator who disconnected mid-countdown.
+const QUIT_GRACE_SECONDS = 5;
+
 export function MaterialsPanel({
   roleName,
   roleNarrative,
@@ -52,6 +62,9 @@ export function MaterialsPanel({
   // null, or which action was blocked for being worth negative value: "accept" | "submit"
   const [negativeValueAction, setNegativeValueAction] = useState(null);
   const [showBlankProposalModal, setShowBlankProposalModal] = useState(false);
+  const [showQuitModal, setShowQuitModal] = useState(false);
+  const [showQuitConfirmModal, setShowQuitConfirmModal] = useState(false);
+  const [quitSecondsLeft, setQuitSecondsLeft] = useState(QUIT_COUNTDOWN_SECONDS);
   const [submitErrorMsg, setSubmitErrorMsg] = useState("");
 
   const { setMediaLocked } = useContext(DailyCallContext);
@@ -120,6 +133,38 @@ export function MaterialsPanel({
   }
 
   const allHistoryProposals = proposalState === "none" || proposalState === "complete" ? history : history.slice(0, -1);
+
+  // Quit countdown: driven by shared game state so every participant sees it.
+  // Each client counts down locally from quitRequest.startedAt — no per-second server writes.
+  const quitRequest = game.get("quitRequest");
+  useEffect(() => {
+    if (!quitRequest) {
+      setQuitSecondsLeft(QUIT_COUNTDOWN_SECONDS);
+      return;
+    }
+
+    const tick = () => {
+      const elapsed = (Date.now() - quitRequest.startedAt) / 1000;
+      const remaining = Math.max(0, QUIT_COUNTDOWN_SECONDS - Math.floor(elapsed));
+      setQuitSecondsLeft(remaining);
+
+      if (game.get("forceQuit")) return;
+
+      const isInitiator = quitRequest.by === player.id;
+      const deadline = isInitiator
+        ? QUIT_COUNTDOWN_SECONDS
+        : QUIT_COUNTDOWN_SECONDS + QUIT_GRACE_SECONDS;
+
+      if (elapsed >= deadline) {
+        game.set("forceQuitBy", quitRequest.by);
+        game.set("forceQuit", true);
+      }
+    };
+
+    tick();
+    const timer = setInterval(tick, 1000);
+    return () => clearInterval(timer);
+  }, [quitRequest?.startedAt, quitRequest?.by, player.id]);
 
   // Auto-show finalize modal when acceptedPendingProposal exists and player hasn't voted
   useEffect(() => {
@@ -284,7 +329,11 @@ export function MaterialsPanel({
       <div className="flex-1 min-h-0 flex gap-4">
         {/* Narrative column: header + tabs stay put, only the tab content scrolls */}
         <div className="w-1/2 min-w-0 h-full pb-12 flex flex-col">
-          <RoleNotesCard roleNarrative={roleNarrative} introText={experimentalTreatmentText} />
+          <RoleNotesCard
+            roleNarrative={roleNarrative}
+            introText={experimentalTreatmentText}
+            onQuit={() => setShowQuitModal(true)}
+          />
         </div>
 
         {/* Proposals column (scrolls independently) */}
@@ -646,6 +695,116 @@ export function MaterialsPanel({
         </div>
       )}
 
+      {/* Quit Modal - Step 1 */}
+      {showQuitModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full mx-4">
+            <div className="text-center mb-6">
+              <div className="text-6xl mb-4">⚠️</div>
+              <h3 className="text-2xl font-bold text-red-600 mb-3">
+                Are you sure you want to declare an impasse?
+              </h3>
+              <p className="text-lg text-gray-700">
+                This will end the negotiation for everybody without an agreement. You should talk this through with the other players before declaring an impasse.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => setShowQuitModal(false)}
+                className="w-full px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold"
+              >
+                Return to Negotiation
+              </button>
+              <button
+                onClick={() => {
+                  setShowQuitModal(false);
+                  setShowQuitConfirmModal(true);
+                }}
+                className="w-full px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold"
+              >
+                End Negotiation for Everyone
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Quit Confirm Modal - Step 2 */}
+      {showQuitConfirmModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full mx-4">
+            <div className="text-center mb-6">
+              <div className="text-6xl mb-4">⚠️</div>
+              <h3 className="text-2xl font-bold text-red-600 mb-3">
+                Are you sure?
+              </h3>
+              <p className="text-lg text-gray-700">
+                Ending the negotiation now will end it for everybody.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => setShowQuitConfirmModal(false)}
+                className="w-full px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold"
+              >
+                Return to Negotiation
+              </button>
+              <button
+                onClick={() => {
+                  setShowQuitConfirmModal(false);
+                  const now = Date.now();
+                  const byName = player.get("displayName") || player.id;
+                  const quitLog = game.get("quitLog") || [];
+                  game.set("quitLog", [...quitLog, { event: "initiated", by: player.id, byName, timestamp: now }]);
+                  game.set("quitRequest", { by: player.id, byName, startedAt: now });
+                }}
+                className="w-full px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold"
+              >
+                End Negotiation for Everyone
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Quit Countdown Modal - Step 3 (shared: shown to all participants) */}
+      {quitRequest && !game.get("forceQuit") && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full mx-4">
+            <div className="text-center mb-6">
+              <div className="text-6xl mb-4">⏳</div>
+              {quitRequest.by === player.id ? (
+                <h3 className="text-2xl font-bold text-red-600 mb-3">
+                  The negotiation will end in {quitSecondsLeft} second{quitSecondsLeft !== 1 ? 's' : ''}
+                </h3>
+              ) : (
+                <>
+                  <h3 className="text-2xl font-bold text-red-600 mb-3">
+                    {quitRequest.byName} has declared an impasse
+                  </h3>
+                  <p className="text-lg text-gray-700">
+                    The negotiation will end in {quitSecondsLeft} second{quitSecondsLeft !== 1 ? 's' : ''} unless {quitRequest.byName} cancels.
+                  </p>
+                </>
+              )}
+            </div>
+            {quitRequest.by === player.id && (
+              <button
+                onClick={() => {
+                  const now = Date.now();
+                  const quitLog = game.get("quitLog") || [];
+                  game.set("quitLog", [...quitLog, { event: "canceled", by: player.id, byName: quitRequest.byName, timestamp: now }]);
+                  game.set("quitRequest", null);
+                }}
+                className="w-full px-6 py-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-bold text-lg"
+              >
+                Cancel — Continue Negotiation
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Welcome Modal */}
       {showWelcomeModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -660,6 +819,9 @@ export function MaterialsPanel({
                   {tableMode
                     ? <>To <strong>submit</strong> a proposal, choose an option for every issue under Proposals, then click "Submit Proposal".</>
                     : <>To <strong>submit</strong> a proposal, describe it in your own words under Proposals, click "Calculate" to see its value, then click "Submit Proposal".</>}
+                </p>
+                <p>
+                  <strong>To end the negotiation without an agreement, click "Quit."</strong>
                 </p>
               </div>
             </div>

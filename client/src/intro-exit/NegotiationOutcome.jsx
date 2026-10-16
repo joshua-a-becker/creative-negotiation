@@ -2,13 +2,37 @@ import React from "react";
 import { usePlayer, useGame } from "@empirica/core/player/classic/react";
 import { Button } from "../components/Button";
 
+// The treatment's yes/no ending message (it carries the Prolific completion
+// link). Shown here when there's no survey; otherwise on SurveyComplete, so
+// the link only appears once the survey is done.
+export function EndingMessage() {
+  const player = usePlayer();
+  const game = useGame();
+  const reachedAgreement = (player.get("bonus") || 0) > 0;
+  const treatment = game.get("treatment") || {};
+
+  return reachedAgreement ? (
+    <div className="bg-yellow-100 border border-gray-200 rounded-lg p-6 text-center text-gray-600">
+      <div
+        className="text-xl [&_*]:text-xl"
+        dangerouslySetInnerHTML={{ __html: treatment.yesAgreementEndingMessage || "" }}
+      />
+    </div>
+  ) : (
+    <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center text-gray-600">
+      <div dangerouslySetInnerHTML={{ __html: treatment.noAgreementEndingMessage || "" }} />
+    </div>
+  );
+}
+
 export function NegotiationOutcome({ next }) {
   const player = usePlayer();
 
   const game = useGame();
 
-  const yes_agreement_ending_message = game.get("treatment").yesAgreementEndingMessage || ""
-  const no_agreement_ending_message = game.get("treatment").noAgreementEndingMessage || ""
+  // With a survey (treatment surveyURL), this page leads on to it instead of
+  // showing the completion link.
+  const hasSurvey = (game.get("survey")?.questions || []).length > 0;
 
   // Get bonus and agreement status from player data (set in onRoundEnded callback)
   const bonus = player.get("bonus") || 0;
@@ -54,13 +78,7 @@ export function NegotiationOutcome({ next }) {
                   {bonus.toFixed(2)} points
                 </p>
               </div>
-              <div className="bg-yellow-100 border border-gray-200 rounded-lg p-6 text-center text-gray-600">
-              <div                                                                                                                                                  
-                className="text-xl [&_*]:text-xl"                                                                                                                   
-                dangerouslySetInnerHTML={{ __html: yes_agreement_ending_message }}                                                                                  
-              />                                                                                                                                                    
-              </div>
-
+              {!hasSurvey && <EndingMessage />}
             </>
           ) : (
             <>
@@ -80,20 +98,23 @@ export function NegotiationOutcome({ next }) {
                   You will receive the base payment only.
                 </p>
               </div>
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center text-gray-600">
-                <div dangerouslySetInnerHTML={{ __html: no_agreement_ending_message }} />
-              </div>
+              {!hasSurvey && <EndingMessage />}
 
             </>
           )}
 
         </div>
 
-        <div className="mt-8 flex justify-center">
-          {/* <Button handleClick={next} autoFocus>
-            <span className="text-lg px-4">Continue</span>
-          </Button> */}
-        </div>
+        {hasSurvey && (
+          <div className="mt-8 flex flex-col items-center gap-4 text-center">
+            <p className="text-lg text-gray-700">
+              Please complete a short survey about your experience. <br/><br/>Your completion link will appear when you're done.
+            </p>
+            <Button handleClick={next} autoFocus>
+              <span className="text-lg px-4">Proceed to Survey</span>
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

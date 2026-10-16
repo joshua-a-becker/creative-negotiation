@@ -14,6 +14,8 @@ import { Demo } from './intro-exit/Demo.jsx';
 import { Instructions } from './intro-exit/Instructions.jsx';
 import { AttentionCheck } from './intro-exit/AttentionCheck.jsx';
 import { NegotiationOutcome } from './intro-exit/NegotiationOutcome.jsx';
+import { Survey } from './intro-exit/Survey.jsx';
+import { SurveyComplete } from './intro-exit/SurveyComplete.jsx';
 import { BatchFullExitStep } from './intro-exit/BatchFullExitStep.jsx';
 import {FollowupQuestion} from './intro-exit/FollowupQuestion.jsx';
 import DailyIframe from "@daily-co/daily-js";
@@ -179,7 +181,13 @@ export default function App() {
       return [NoGameExitStep];
     }
 
-    return [FollowupQuestion, NegotiationOutcome];
+    // With a post-negotiation survey (treatment surveyURL, loaded by the
+    // server into game.survey): outcome → survey → completion link.
+    if ((game?.get("survey")?.questions || []).length > 0) {
+      return [NegotiationOutcome, Survey, SurveyComplete];
+    }
+
+    return [NegotiationOutcome];
   }
   
 

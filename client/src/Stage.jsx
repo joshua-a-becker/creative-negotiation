@@ -2,6 +2,7 @@ import {
   usePlayer,
   usePlayers,
   useStage,
+  useGame,
 } from "@empirica/core/player/classic/react";
 import { Loading } from "@empirica/core/player/react";
 import React, { useContext, useEffect } from "react";
@@ -15,9 +16,22 @@ export function Stage({ profileComponent }) {
   const player = usePlayer();
   const players = usePlayers();
   const stage = useStage();
+  const game = useGame();
   const { teardownCall } = useContext(DailyCallContext);
 
   const stageName = stage.get("name");
+
+  // Force submit once someone's Quit countdown has run out (game.forceQuit,
+  // set in MaterialsPanel). Only during the negotiation stage.
+  useEffect(() => {
+    if (
+      game.get("forceQuit") === true &&
+      stageName === "Time To Negotiate" &&
+      !player.stage.get("submit")
+    ) {
+      player.stage.set("submit", true);
+    }
+  }, [game.get("forceQuit"), stageName, player]);
 
   // The prep stages show no video, so fully release the Daily call and the local
   // camera/mic here: the recording indicator goes dark and nothing is recorded.

@@ -5,6 +5,7 @@ import { createHash } from "crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import os from "os";
 import path from "path";
+import yaml from "js-yaml";
 
 // import rolesData from "./roles.json" assert { type: "json" };
 // const roles = rolesData.roles;
@@ -220,6 +221,19 @@ function fetchJSON(urlOrPath) {
   return JSON.parse(text);
 }
 
+// Post-negotiation survey (treatment factor surveyURL): a YAML document with
+// `scales` and paged `questions`, rendered by client intro-exit/Survey.jsx.
+// Fetched and parsed here so the client needs no YAML parser.
+function loadSurvey(surveyURL) {
+  if (!surveyURL) return null;
+  const text = surveyURL.startsWith("http")
+    ? execSync(`curl -sfL "${surveyURL}"`, { maxBuffer: 4 * 1024 * 1024 }).toString()
+    : readFileSync(surveyURL, "utf8");
+  const survey = yaml.load(text);
+  if (!survey || !Array.isArray(survey.questions)) throw new Error("survey YAML has no questions list");
+  return survey;
+}
+
 function loadRolesData(roleDataURL) {
   const sources = String(roleDataURL || "").split(/[,\s]+/).filter(Boolean);
   const merged = { roles: [], tips: "", readRoleInstructions: "", scenario: null, scenarioUrl: "" };
@@ -380,6 +394,8 @@ Empirica.onRoundEnded(({ round }) => {
 
   // Save whether agreement was reached to the round
   round.set("agreementReached", reachedAgreement);
+  // Ended early because a player's Quit countdown ran out (client sets game.forceQuit).
+  round.set("endedByQuit", game.get("forceQuit") === true);
   
 });
 
@@ -392,6 +408,17 @@ Empirica.onGameStart(({ game }) => {
 
   // Store tips in game state for client access
   game.set("tips", rolesData.tips || "");
+  // Post-negotiation survey; when missing or broken the exit steps skip it.
+  const surveyURL = game.get("treatment")?.surveyURL;
+  try {
+    const survey = loadSurvey(surveyURL);
+    game.set("survey", survey);
+    if (survey) console.log(`Loaded survey (${survey.questions.length} questions) from ${surveyURL}`);
+  } catch (err) {
+    console.error(`Failed to load survey from ${surveyURL}:`, err);
+    game.set("survey", null);
+  }
+
   // "How it works" box on the read-role page (HTML); hidden when empty.
   game.set("readRoleInstructions", rolesData.readRoleInstructions || "");
 

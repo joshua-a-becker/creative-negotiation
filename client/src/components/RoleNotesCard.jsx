@@ -7,7 +7,8 @@ import { NotesBox } from "./NotesBox";
 // only the tab content scrolls, with a fade at the bottom while there's more.
 //   introText       optional line shown above the narrative (treatment text)
 //   notesAttribute  player key the notes are saved under (see NotesBox)
-export function RoleNotesCard({ roleNarrative, introText, notesAttribute = "notes" }) {
+//   onQuit          when given, a Quit button sits after the tabs (negotiation only)
+export function RoleNotesCard({ roleNarrative, introText, notesAttribute = "notes", onQuit }) {
   const [roleTab, setRoleTab] = useState("narrative"); // "narrative" | "notes"
 
   const roleScrollRef = useRef(null);
@@ -28,20 +29,30 @@ export function RoleNotesCard({ roleNarrative, introText, notesAttribute = "note
         <h3 className="text-2xl font-bold text-gray-900">
           {roleTab === "notes" ? "Your Notes" : "Your Role"}
         </h3>
-        <div className="flex gap-1 p-1 bg-gray-200 rounded-lg">
-          {[["narrative", "Role"], ["notes", "Notes"]].map(([tab, label]) => (
+        <div className="flex items-center gap-3">
+          <div className="flex gap-1 p-1 bg-gray-200 rounded-lg">
+            {[["narrative", "Role"], ["notes", "Notes"]].map(([tab, label]) => (
+              <button
+                key={tab}
+                onClick={() => setRoleTab(tab)}
+                className={`px-6 py-2 rounded-md text-base font-bold transition-all ${
+                  roleTab === tab
+                    ? "bg-blue-600 text-white shadow"
+                    : "text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          {onQuit && (
             <button
-              key={tab}
-              onClick={() => setRoleTab(tab)}
-              className={`px-6 py-2 rounded-md text-base font-bold transition-all ${
-                roleTab === tab
-                  ? "bg-blue-600 text-white shadow"
-                  : "text-gray-700 hover:bg-gray-300"
-              }`}
+              onClick={onQuit}
+              className="px-4 py-2 rounded-lg text-base font-bold transition-all border border-gray-300 bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-700 hover:border-red-300"
             >
-              {label}
+              Quit
             </button>
-          ))}
+          )}
         </div>
       </div>
       {roleTab === "notes" ? (
