@@ -190,7 +190,7 @@ export function ReadRoleContent({ profileComponent }) {
                     <div className={`text-sm font-semibold ${
                       calculateTotalPoints() >= roleRP ? 'text-green-600' : 'text-red-600'
                     }`}>
-                      {calculateTotalPoints() >= roleRP ? '✓ Beats your BATNA!' : '✗ Below your BATNA'}
+                      {calculateTotalPoints() >= roleRP ? '✓ Beats your best alternative!' : '✗ Below your best alternative'}
                     </div>
                   )}
                 </div>

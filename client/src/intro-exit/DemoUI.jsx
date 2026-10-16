@@ -197,7 +197,7 @@ export function DemoUI({
                           </p>
                           {value !== null && (
                             <p className={`text-sm font-semibold mt-1 ${value >= threshold ? "text-green-600" : "text-red-600"}`}>
-                              {value >= threshold ? "✓ Beats your BATNA" : "✗ Below your BATNA"}
+                              {value >= threshold ? "✓ Beats your best alternative" : "✗ Below your best alternative"}
                             </p>
                           )}
                         </div>

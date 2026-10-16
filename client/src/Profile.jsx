@@ -23,8 +23,10 @@ export function Profile() {
     player.stage.set("submit", true);
   };
 
+  // Side columns size to content (left is empty, right is the dev-only skip
+  // button) so the timer gets the full remaining width of the narrow panel.
   return (
-    <div className="w-full px-3 py-0.5 text-gray-500 grid grid-cols-3 items-center border-b border-gray-300">
+    <div className="w-full px-3 py-0.5 text-gray-500 grid grid-cols-[auto_1fr_auto] items-center border-b border-gray-300">
       <div className="leading-tight">
         <div className="text-empirica-500 font-medium">
           {/*stage ? stage.get("name") : ""*/}
@@ -33,14 +35,15 @@ export function Profile() {
 
       <Timer />
 
-      <div className="flex space-x-3 items-center justify-end">
+     <div className="flex space-x-3 items-center justify-end">
         {/* Dev-only Skip Stage button */}
         {isDevMode && (
           <button
             onClick={handleSkipStage}
-            className="text-white bg-red-600 px-4 py-0 text-base font-medium rounded hover:bg-red-700 transition-colors border border-red-700"
+            className="text-white bg-red-600 px-1.5 py-0 text-xs leading-tight font-medium rounded hover:bg-red-700 transition-colors border border-red-700"
+            title="Skip stage (dev only)"
           >
-            SKIP
+            x
           </button>
         )}
       </div>

@@ -16,11 +16,8 @@ import {
 export function MaterialsPanel({
   roleName,
   roleNarrative,
-  roleScoresheet,
   roleBATNA,
   roleRP,
-  roleMultiplier,
-  rolePriceRP,
 }) {
   const player = usePlayer();
   const stage = useStage();
@@ -241,6 +238,7 @@ export function MaterialsPanel({
             <h3 className="text-2xl font-bold text-gray-900 mb-4">
               Your Role
             </h3>
+            [experimental treatment goes here]
             <div className="prose prose-gray max-w-none text-gray-700 leading-snug prose-p:my-2 prose-li:my-0.5 prose-headings:my-3">
               <RoleNarrative>{roleNarrative}</RoleNarrative>
             </div>
@@ -301,38 +299,14 @@ export function MaterialsPanel({
                   </span>
                 </div>
 
-                {/* Value for this player */}
                 {(() => {
                   const value = proposalValue(pendingProposal, viewerFor(pendingProposal));
 
                   return (
-                    <div className="mb-6">
-                      <div className="text-center mb-4">
-                        <p className="text-sm text-gray-600 mb-1">Value to you:</p>
-                        <p className={`text-4xl font-bold ${value === null ? "text-gray-300" : "text-blue-600"}`}>
-                          {formatValue(value)}
-                        </p>
-                        {value !== null && (
-                          <p className={`text-sm font-semibold mt-1 ${
-                            value >= threshold ? 'text-green-600' : 'text-red-600'
-                          }`}>
-                            {value >= threshold ? '✓ Beats your BATNA' : '✗ Below your BATNA'}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Show proposal details */}
-                      <div className="bg-blue-50 rounded p-4 mb-4">
-                        <h4 className="text-sm font-bold text-gray-700 mb-2">Proposal Details:</h4>
-                        <ProposalDetails
-                          proposal={pendingProposal}
-                          viewer={viewerFor(pendingProposal)}
-                        />
-                      </div>
-
-                      {/* Vote buttons or status */}
+                    <div className="mb-2">
+                      {/* Vote buttons or status, above the proposal */}
                       {pendingProposal.initialVotes[player.id] ? (
-                        <div className="text-center p-4 bg-gray-100 rounded">
+                        <div className="text-center p-4 bg-gray-100 rounded mb-4">
                           <p className="text-sm text-gray-600">
                             You voted: <span className="font-bold">
                               {pendingProposal.initialVotes[player.id] === "accept" ? "✓ Accept" : "✗ Reject"}
@@ -343,7 +317,7 @@ export function MaterialsPanel({
                           </p>
                         </div>
                       ) : (
-                        <div className="flex gap-3">
+                        <div className="flex gap-3 mb-4">
                           <button
                             onClick={() => handleVote(pendingProposal.id, "accept")}
                             className="flex-1 px-4 py-3 bg-green-600 text-white rounded hover:bg-green-700 transition-colors font-semibold"
@@ -358,6 +332,30 @@ export function MaterialsPanel({
                           </button>
                         </div>
                       )}
+
+                      {/* Proposal: details on the left, value to this player on the right */}
+                      <div className="bg-blue-50 rounded p-4 flex gap-4 items-start">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-bold text-gray-700 mb-2">Proposal Details:</h4>
+                          <ProposalDetails
+                            proposal={pendingProposal}
+                            viewer={viewerFor(pendingProposal)}
+                          />
+                        </div>
+                        <div className="shrink-0 text-center bg-white rounded p-3 border border-gray-300 min-w-[140px]">
+                          <p className="text-sm text-gray-600 mb-1">Total value to you</p>
+                          <p className={`text-4xl font-bold ${value === null ? "text-gray-300" : "text-blue-600"}`}>
+                            {formatValue(value)}
+                          </p>
+                          {value !== null && (
+                            <p className={`text-sm font-semibold mt-1 ${
+                              value >= threshold ? 'text-green-600' : 'text-red-600'
+                            }`}>
+                              {value >= threshold ? '✓ Beats your best alternative' : '✗ Below your best alternative'}
+                            </p>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   );
                 })()}

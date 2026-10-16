@@ -7,11 +7,10 @@ export function VideoNegotiate({ profileComponent }) {
   const player = usePlayer();
   const roleName = player.get("roleName");
   const roleNarrative = player.get("roleNarrative");
-  const roleScoresheet = player.get("roleScoresheet");
   const roleBATNA = player.get("roleBATNA");
   const roleRP = player.get("roleRP");
 
-  if (!roleName || !roleNarrative || !roleScoresheet) {
+  if (!roleName || !roleNarrative) {
     return (
       <div className="w-full h-full flex items-center justify-center">
         <p className="text-gray-500">Loading your role...</p>
@@ -25,7 +24,6 @@ export function VideoNegotiate({ profileComponent }) {
         <MaterialsPanel
           roleName={roleName}
           roleNarrative={roleNarrative}
-          roleScoresheet={roleScoresheet}
           roleBATNA={roleBATNA}
           roleRP={roleRP}
         />

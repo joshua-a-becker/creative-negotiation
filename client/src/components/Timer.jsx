@@ -29,7 +29,7 @@ export function Timer() {
 
  return (
    <>
-     <div className={`flex flex-col items-center ${isVideoNegotiate && !isUnder5Min ? "invisible" : ""}`}>
+     <div className="flex flex-col items-center whitespace-nowrap">
        Time Remaining<h1 className="tabular-nums text-3xl text-gray-500 font-semibold">
           {humanTimer(remaining)}
        </h1>

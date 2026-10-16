@@ -81,9 +81,8 @@ function runPythonScorer({ text, role, previousText, issueSpace, scenarioFile })
       return;
     }
     const args = [script, "--json", "--role", scorerRoleFor(role), "--text", text];
-    if (previousText) args.push("--previous-offer", previousText);
-    // The scenario (issues, ranges, payoffs) comes from the role JSON's
-    // scenario_url, fetched at game start; --issue-space is the fallback.
+    // The scenario (issues, ranges, payoffs) comes from the game's role data
+    // file, materialised at game start; --issue-space is the fallback.
     if (scenarioFile) args.push("--scenario-file", scenarioFile);
     const space = issueSpace || process.env.SCORER_ISSUE_SPACE;
     if (space) args.push("--issue-space", space);
@@ -201,11 +200,17 @@ async function scoreOffer({ text, role, previousText, issueSpace, scenarioFile }
 
 // ----------------------------------------------------------------------------
 // Role data loading. `roleDataURL` may list several URLs/paths separated by
-// commas or whitespace (e.g. one file per role). Each JSON has the Empirica
-// shape { roles: [...], tips } and may add:
-//   scenario_url  URL of the scorer's scenario JSON (issues/ranges/payoffs)
-//   scenario      the same, inline
-//   scorer_role   name of this role inside the scenario (defaults to role_name)
+// commas or whitespace. Two shapes are supported:
+//
+// 1. Single-file (preferred): one JSON defines the whole game. `roles` is an
+//    object keyed by scorer role name (e.g. "Candidate"/"Recruiter"), each
+//    with `narrative`/`BATNA`/`RP` for the UI. The document as a whole is
+//    ALSO the scorer's scenario (issues/ranges/payoffs) — score_offer.py
+//    ignores the fields it doesn't need — so it's passed straight through as
+//    `scenario`, no separate scenario file required.
+// 2. Legacy: { roles: [...], tips, scenario_url | scenario }, one role JSON
+//    per Empirica's classic loader shape, linking out to a separate scenario
+//    JSON. Kept for older, non-scorer treatments (e.g. shared-office-space).
 // ----------------------------------------------------------------------------
 
 function fetchJSON(urlOrPath) {
@@ -220,14 +225,25 @@ function loadRolesData(roleDataURL) {
   const merged = { roles: [], tips: "", scenario: null, scenarioUrl: "" };
   for (const src of sources) {
     const data = fetchJSON(src);
-    const roles = Array.isArray(data.roles) ? data.roles : (data.role_name ? [data] : []);
-    for (const role of roles) {
-      merged.roles.push({ ...role, scorer_role: role.scorer_role || data.scorer_role || role.role_name });
+    if (data.roles && !Array.isArray(data.roles) && typeof data.roles === "object") {
+      // Single-file shape: `roles` keyed by scorer role name; the whole
+      // document is the scenario.
+      for (const [roleName, role] of Object.entries(data.roles)) {
+        merged.roles.push({ role_name: roleName, ...role, scorer_role: role.scorer_role || roleName });
+      }
+      if (!merged.scenario) merged.scenario = data;
+      console.log(`Loaded ${Object.keys(data.roles).length} role(s) (single-file) from ${src}`);
+    } else {
+      // Legacy shape: roles is an array, scenario lives in a separate file.
+      const roles = Array.isArray(data.roles) ? data.roles : (data.role_name ? [data] : []);
+      for (const role of roles) {
+        merged.roles.push({ ...role, scorer_role: role.scorer_role || data.scorer_role || role.role_name });
+      }
+      if (!merged.scenario && data.scenario) merged.scenario = data.scenario;
+      if (!merged.scenarioUrl && data.scenario_url) merged.scenarioUrl = data.scenario_url;
+      console.log(`Loaded ${roles.length} role(s) (legacy) from ${src}`);
     }
     if (!merged.tips && data.tips) merged.tips = data.tips;
-    if (!merged.scenario && data.scenario) merged.scenario = data.scenario;
-    if (!merged.scenarioUrl && data.scenario_url) merged.scenarioUrl = data.scenario_url;
-    console.log(`Loaded ${roles.length} role(s) from ${src}`);
   }
   return merged;
 }
@@ -259,8 +275,8 @@ Empirica.on("player", "calculateHistory", async (_ctx, { player, calculateHistor
   const previousText = String(last.previousText || "");
   // A request may name a built-in issue space (the intro tutorial sends
   // "tutorial"); it then scores with that scenario and the role it asked for.
-  // Otherwise: the scenario file materialised at game start from the role
-  // JSON's scenario_url, with scorerIssueSpace (15 | 200 | fixed-15) as the
+  // Otherwise: the scenario file materialised at game start from the game's
+  // role data, with scorerIssueSpace (15 | 200 | fixed-15) as the
   // treatment-level fallback, and the player's scorer role.
   const scenarioOverride = String(last.scenario || "");
   const scenarioFile = scenarioOverride ? "" : (player.get("scorerScenarioFile") || "");
@@ -476,7 +492,6 @@ Empirica.onGameStart(({ game }) => {
       const assignedRole = roles[index % roles.length];
       player.set("roleName", assignedRole.role_name);
       player.set("roleNarrative", assignedRole.narrative);
-      player.set("roleScoresheet", assignedRole.scoresheet);
       player.set("roleBATNA", assignedRole.BATNA);
       player.set("roleRP", assignedRole.RP);
       player.set("scorerRole", assignedRole.scorer_role || assignedRole.role_name);

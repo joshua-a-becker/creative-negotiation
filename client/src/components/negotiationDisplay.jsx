@@ -76,7 +76,7 @@ export function proposalValue(proposal, viewer) {
   return viewerScore(proposal.score, viewer).total;
 }
 
-// "Beats your BATNA" threshold.
+// "Beats your best alternative" threshold.
 export function batnaThreshold(roleRP) {
   return roleRP ?? 0;
 }
@@ -140,23 +140,27 @@ export function ScoreBreakdown({ score, lines, small = false }) {
   const missing = score.missing_required || [];
   const novel = score.novel_terms || [];
 
-  const statusCls = scorable
-    ? "bg-green-100 text-green-800"
-    : rejected ? "bg-red-100 text-red-800" : "bg-amber-100 text-amber-800";
-  const statusText = scorable ? "Scored" : rejected ? "Not scored yet" : "Clarification needed";
+  // A status chip only when there is something to flag; a cleanly scored offer
+  // speaks for itself through its value.
+  const statusCls = rejected ? "bg-red-100 text-red-800" : "bg-amber-100 text-amber-800";
+  const statusText = rejected ? "Not scored yet" : "Clarification needed";
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2 flex-wrap">
-        <span className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wide ${statusCls}`}>
-          {statusText}
-        </span>
-        {score.relative_revision && (
-          <span className={`${textCls} text-gray-500 italic`}>
-            Applied as a change to your previous offer.
-          </span>
-        )}
-      </div>
+      {(!scorable || score.relative_revision) && (
+        <div className="flex items-center gap-2 flex-wrap">
+          {!scorable && (
+            <span className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wide ${statusCls}`}>
+              {statusText}
+            </span>
+          )}
+          {score.relative_revision && (
+            <span className={`${textCls} text-gray-500 italic`}>
+              Applied as a change to your previous offer.
+            </span>
+          )}
+        </div>
+      )}
 
       {rows.length > 0 && (
         <div>
@@ -337,7 +341,7 @@ export function ScoringCalculator({
               </div>
               {scored && total !== null ? (
                 <div className={`text-sm font-semibold ${total >= threshold ? "text-green-600" : "text-red-600"}`}>
-                  {total >= threshold ? "✓ Beats your BATNA!" : "✗ Below your BATNA"}
+                  {total >= threshold ? "✓ Beats your best alternative!" : "✗ Below your best alternative"}
                 </div>
               ) : (
                 <p className="text-xs text-gray-500">

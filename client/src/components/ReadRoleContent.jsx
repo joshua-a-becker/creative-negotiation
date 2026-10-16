@@ -10,7 +10,6 @@ export function ReadRoleContent({ profileComponent }) {
   const tips = game.get("tips") || "";
   const roleName = player.get("roleName");
   const roleNarrative = player.get("roleNarrative");
-  const roleScoresheet = player.get("roleScoresheet");
   const roleBATNA = player.get("roleBATNA");
   const roleRP = player.get("roleRP");
   const [showFade, setShowFade] = useState(false);
