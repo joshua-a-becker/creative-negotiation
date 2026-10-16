@@ -7,16 +7,18 @@ import { usePlayer } from "@empirica/core/player/classic/react";
 // tab switch) so the last edit isn't lost.
 const SAVE_DELAY_MS = 5000;
 
-export function NotesBox({ className = "" }) {
+// `attribute` is the player key the notes are saved under (the tutorial uses
+// its own, so practice notes don't carry into the real negotiation).
+export function NotesBox({ className = "", attribute = "notes" }) {
   const player = usePlayer();
-  const [text, setText] = useState(() => player.get("notes") || "");
+  const [text, setText] = useState(() => player.get(attribute) || "");
   const pending = useRef(null); // unsaved text, or null when saved
   const timer = useRef(null);
 
   const save = () => {
     clearTimeout(timer.current);
     if (pending.current === null) return;
-    player.set("notes", pending.current);
+    player.set(attribute, pending.current);
     pending.current = null;
   };
 

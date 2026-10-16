@@ -136,3 +136,45 @@ export const demoTips = `
 
 <p><strong>Communicate clearly:</strong> Explain why certain things matter to you. Understanding each other's reasoning can help find creative solutions that work for everyone.</p>
 `;
+
+// ---------------------------------------------------------------------------
+// Table-mode tutorial (treatment scoringMode: "table"; see DemoTable.jsx).
+// Same practice scenario, but offers are built by picking one option per
+// issue from the payoff table instead of typed in free text. Values are the
+// Community Event Organizer's (the participant's); the Venue Manager's
+// scripted offers store option indices, as real table-mode proposals do.
+// ---------------------------------------------------------------------------
+
+export const tutorialTableScoresheet = {
+  "Venue fee": [
+    { option: "$300", score: 2 },
+    { option: "$400", score: 1 },
+    { option: "$500", score: 0 },
+    { option: "$600", score: -1 },
+    { option: "$700", score: -2 },
+  ],
+  "Event date": [
+    { option: "August 1", score: -2 },
+    { option: "August 15", score: -1 },
+    { option: "September 1", score: 0 },
+    { option: "September 15", score: 1 },
+    { option: "September 30", score: 2 },
+  ],
+  "Closing time": [
+    { option: "5 p.m.", score: -2 },
+    { option: "7 p.m.", score: -1 },
+    { option: "8 p.m.", score: 0 },
+    { option: "9 p.m.", score: 1 },
+    { option: "11 p.m.", score: 2 },
+  ],
+};
+
+export const demoTableNarrative = "**PRACTICE ROLE MATERIALS**\n\n**You are a Community Event Organizer negotiating with a Venue Manager.** You are planning a relaxed Make & Meet where neighbors can try creative activities, share food, and meet local makers.\n\n- *Every offer must include:* a venue fee, an event date, and a closing time.\n- You prefer a lower fee, a later date, and a later closing time. The Venue Manager prefers a higher fee, an earlier date, and an earlier close.\n- Your scoring table shows what each option is worth to you. To make an offer, choose one option for each issue; the table adds up the total value to you.\n";
+
+// The Venue Manager's scripted offers: option index per issue.
+export const tutorialTableReplies = [
+  // $600, August 15, 7 p.m. → worth -3 to you: reject it.
+  { "Venue fee": 3, "Event date": 1, "Closing time": 1 },
+  // $500, September 15, 9 p.m. → worth +2 to you: accept it.
+  { "Venue fee": 2, "Event date": 3, "Closing time": 3 },
+];

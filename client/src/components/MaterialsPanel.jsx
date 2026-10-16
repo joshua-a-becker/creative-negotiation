@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { RoleNarrative } from "./RoleNarrative";
-import { NotesBox } from "./NotesBox";
+import { RoleNotesCard } from "./RoleNotesCard";
 import { usePlayer, useStage, useRound, useGame } from "@empirica/core/player/classic/react";
 import { DailyCallContext } from "../App";
 import { useOfferScoring } from "./useOfferScoring";
@@ -52,7 +51,6 @@ export function MaterialsPanel({
   const [showFinalizeModal, setShowFinalizeModal] = useState(false);
   // null, or which action was blocked for being worth negative value: "accept" | "submit"
   const [negativeValueAction, setNegativeValueAction] = useState(null);
-  const [roleTab, setRoleTab] = useState("narrative"); // "narrative" | "notes"
   const [showBlankProposalModal, setShowBlankProposalModal] = useState(false);
   const [submitErrorMsg, setSubmitErrorMsg] = useState("");
 
@@ -67,18 +65,6 @@ export function MaterialsPanel({
   const [welcomeSecondsLeft, setWelcomeSecondsLeft] = useState(WELCOME_LOCK_SECONDS);
 
   const proposalsColumnRef = useRef(null);
-  // Bottom fade on the role narrative while there's more to scroll.
-  const roleScrollRef = useRef(null);
-  const [roleMoreBelow, setRoleMoreBelow] = useState(false);
-  const updateRoleMoreBelow = () => {
-    const el = roleScrollRef.current;
-    setRoleMoreBelow(!!el && el.scrollTop + el.clientHeight < el.scrollHeight - 4);
-  };
-  useEffect(() => {
-    updateRoleMoreBelow();
-    window.addEventListener("resize", updateRoleMoreBelow);
-    return () => window.removeEventListener("resize", updateRoleMoreBelow);
-  }, [roleTab, roleNarrative, experimentalTreatmentText]);
   const [wiggleStoppedId, setWiggleStoppedId] = useState(null); // proposal id whose wiggle the user interrupted
 
   // Compute proposal state from vote counts (derived state, no useEffect needed)
@@ -298,45 +284,7 @@ export function MaterialsPanel({
       <div className="flex-1 min-h-0 flex gap-4">
         {/* Narrative column: header + tabs stay put, only the tab content scrolls */}
         <div className="w-1/2 min-w-0 h-full pb-12 flex flex-col">
-          <div className="flex-1 min-h-0 bg-white rounded-lg shadow-md p-6 flex flex-col">
-            <div className="shrink-0 flex items-center justify-between gap-4 mb-4">
-              <h3 className="text-2xl font-bold text-gray-900">
-                {roleTab === "notes" ? "Your Notes" : "Your Role"}
-              </h3>
-              <div className="flex gap-1 p-1 bg-gray-200 rounded-lg">
-                {[["narrative", "Role"], ["notes", "Notes"]].map(([tab, label]) => (
-                  <button
-                    key={tab}
-                    onClick={() => setRoleTab(tab)}
-                    className={`px-6 py-2 rounded-md text-base font-bold transition-all ${
-                      roleTab === tab
-                        ? "bg-blue-600 text-white shadow"
-                        : "text-gray-700 hover:bg-gray-300"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-            {roleTab === "notes" ? (
-              <NotesBox className="flex-1 min-h-0" />
-            ) : (
-              <div className="flex-1 min-h-0 relative">
-              <div ref={roleScrollRef} onScroll={updateRoleMoreBelow} className="h-full overflow-y-auto">
-                {experimentalTreatmentText && (
-                  <p className="text-gray-700 mb-4">{experimentalTreatmentText}</p>
-                )}
-                <div className="prose prose-gray max-w-none text-gray-700 leading-snug prose-p:my-2 prose-li:my-0.5 prose-headings:my-3">
-                  <RoleNarrative>{roleNarrative}</RoleNarrative>
-                </div>
-              </div>
-              {roleMoreBelow && (
-                <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
-              )}
-              </div>
-            )}
-          </div>
+          <RoleNotesCard roleNarrative={roleNarrative} introText={experimentalTreatmentText} />
         </div>
 
         {/* Proposals column (scrolls independently) */}

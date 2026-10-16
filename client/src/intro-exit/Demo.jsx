@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { usePlayer } from "@empirica/core/player/classic/react";
+import { usePlayer, useGame } from "@empirica/core/player/classic/react";
 import { DemoUI } from "./DemoUI";
+import { DemoLayout } from "./DemoLayout";
+import { DemoTable } from "./DemoTable";
+import { isTableMode } from "../components/tableScoring";
 import { RoleNarrative } from "../components/RoleNarrative";
 import { proposalValue, isScorable } from "../components/negotiationDisplay";
 import {
   demoNarrative,
-  demoTips,
   demoBATNA,
   demoRP,
   tutorialRole,
@@ -24,11 +26,11 @@ import {
  *
  * Sequence (mirrors the original tutorial):
  *   INTRO          "This is a tutorial" → read the practice role materials
- *   MAKE_OFFER_1   type a first offer, Calculate, Submit
- *   VOTE_ON_OWN_1  vote on it (the Venue Manager has already rejected it)
+ *   MAKE_OFFER_1   type a first offer, Calculate, Submit (counts as your
+ *                  accept, as in the real negotiation; the Venue Manager rejects it)
  *   COUNTER_1      the Venue Manager's counteroffer — must be Rejected
  *   MAKE_OFFER_2   Modify (copy) either offer, edit it, add ONE new issue
- *   VOTE_ON_OWN_2  vote on it (rejected again)
+ *                  (rejected again)
  *   COUNTER_2      the Venue Manager's final offer — must be Accepted
  *   FINALIZE       confirm the agreement (Finalize Deal)
  *   COMPLETE
@@ -37,10 +39,8 @@ import {
 const STATES = {
   INTRO: "INTRO",
   MAKE_OFFER_1: "MAKE_OFFER_1",
-  VOTE_ON_OWN_1: "VOTE_ON_OWN_1",
   COUNTER_1: "COUNTER_1",
   MAKE_OFFER_2: "MAKE_OFFER_2",
-  VOTE_ON_OWN_2: "VOTE_ON_OWN_2",
   COUNTER_2: "COUNTER_2",
   FINALIZE: "FINALIZE",
   COMPLETE: "COMPLETE",
@@ -64,7 +64,14 @@ const HintList = ({ names }) => (
   </ul>
 );
 
-export function Demo({ next }) {
+// The tutorial matches the treatment's scoring mode: the table tutorial
+// (DemoTable.jsx) for scoringMode "table", otherwise the free-text one below.
+export function Demo(props) {
+  const game = useGame();
+  return isTableMode(game?.get("treatment")) ? <DemoTable {...props} /> : <DemoFreeText {...props} />;
+}
+
+function DemoFreeText({ next }) {
   const player = usePlayer();
 
   // Single source of truth for the tutorial, persisted on the player so a
@@ -144,30 +151,38 @@ export function Demo({ next }) {
       }
     }
 
+    // Your proposal counts as your accept; the Venue Manager rejects both practice offers.
     const mine = {
       id: `you-${Date.now()}`,
       submittedBy: "user",
       submittedByName: "You",
       text,
       score,
-      initialVotes: { [COUNTERPART_ID]: "reject" }, // the Venue Manager rejects both practice offers
+      initialVotes: { user: "accept", [COUNTERPART_ID]: "reject" },
       finalVotes: {},
-      status: "pending",
+      status: "failed",
     };
-    saveProposals([...proposals, mine]);
-    savePriorIssues([...new Set([...priorIssues, ...issuesOf(score)])]);
+    const replyIndex = state === STATES.MAKE_OFFER_1 ? 0 : 1;
+    const reply = counterpartOffer(replyIndex);
+    saveProposals([...proposals, mine, reply]);
+    savePriorIssues([...new Set([...priorIssues, ...issuesOf(score), ...issuesOf(reply.score)])]);
 
-    if (state === STATES.MAKE_OFFER_1) {
-      saveState(STATES.VOTE_ON_OWN_1);
-      setModal({ emoji: "✅", title: "Proposal submitted", body: "Great! Now you have to vote on it, even though it's your own proposal.", button: "OK" });
-    } else {
-      saveState(STATES.VOTE_ON_OWN_2);
+    if (replyIndex === 0) {
+      saveState(STATES.COUNTER_1);
       setModal({
-        emoji: "✅",
-        title: "New issue introduced",
-        body: introduced.length
-          ? `Great. Before, you were only negotiating on ${naturalList(priorIssues)}. You introduced ${naturalList(introduced)}. Now vote on your proposal.`
-          : "Good! Now vote on your modified proposal.",
+        emoji: "💬",
+        title: "Review and reject the counteroffer",
+        body: "Your offer has been rejected. The other player (not real yet) has made a counteroffer. Review and reject that counteroffer.",
+        button: "OK",
+      });
+    } else {
+      saveState(STATES.COUNTER_2);
+      setModal({
+        emoji: "🤝",
+        title: "Accept the final practice offer",
+        body: `${introduced.length
+          ? `Great. Before, you were only negotiating on ${naturalList(priorIssues)}. You introduced ${naturalList(introduced)}. `
+          : ""}The ${tutorialCounterpartName} rejected your proposal again, but made a final offer that covers all of the practice issues and gives both sides positive value. In the real negotiation the choice is yours; for this tutorial, click Accept to finish.`,
         button: "OK",
       });
     }
@@ -198,31 +213,6 @@ export function Demo({ next }) {
     const settle = (status) => proposals.map((p) =>
       p.id === proposalId ? { ...p, status, initialVotes: { ...p.initialVotes, user: vote } } : p
     );
-
-    if (state === STATES.VOTE_ON_OWN_1 || state === STATES.VOTE_ON_OWN_2) {
-      const replyIndex = state === STATES.VOTE_ON_OWN_1 ? 0 : 1;
-      const reply = counterpartOffer(replyIndex);
-      saveProposals([...settle("failed"), reply]);
-      savePriorIssues([...new Set([...priorIssues, ...issuesOf(reply.score)])]);
-      if (replyIndex === 0) {
-        saveState(STATES.COUNTER_1);
-        setModal({
-          emoji: "💬",
-          title: "Review and reject the counteroffer",
-          body: `The ${tutorialCounterpartName} rejected your proposal and made a counteroffer. In the real negotiation you could accept or reject it. For this tutorial, click Reject so you can practise making a counteroffer.`,
-          button: "OK",
-        });
-      } else {
-        saveState(STATES.COUNTER_2);
-        setModal({
-          emoji: "🤝",
-          title: "Accept the final practice offer",
-          body: "This offer covers all of the practice issues and gives both sides positive value. In the real negotiation the choice is yours; for this tutorial, click Accept to finish.",
-          button: "OK",
-        });
-      }
-      return;
-    }
 
     if (state === STATES.COUNTER_1) {
       if (vote === "accept") {
@@ -291,67 +281,24 @@ export function Demo({ next }) {
   };
 
   return (
-    <div className="h-screen flex">
-      {/* Left side: Demo UI (70% width) */}
-      <div className="w-[70%]">
-        <DemoUI
-          roleName={tutorialRole}
-          roleNarrative={demoNarrative}
-          roleBATNA={demoBATNA}
-          roleRP={demoRP}
-          tips={demoTips}
-          displayData={displayData}
-          viewerFor={viewerFor}
-          onProposalSubmit={handleProposalSubmit}
-          onCopyOffer={() => saveCopyUsed(true)}
-          onVote={handleVote}
-          onFinalizeVote={handleFinalizeVote}
-        />
-      </div>
-
-      {/* Right side: Placeholder for video chat (30% width) */}
-      <div className="w-[30%] bg-gray-800 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4">🎥</div>
-          <p className="text-white text-xl font-semibold">Video Chat Will Go Here</p>
-        </div>
-      </div>
-
-      {/* Tutorial Modal */}
-      {modal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className={`bg-white rounded-lg shadow-2xl p-8 w-full mx-4 ${modal.wide ? "max-w-3xl" : "max-w-lg"}`}>
-            {modal.emoji && <div className="text-6xl mb-4 text-center">{modal.emoji}</div>}
-            <h2 className="text-2xl font-bold mb-4 text-center">{modal.title}</h2>
-            <div className="text-lg text-gray-700 mb-6 text-center">{modal.body}</div>
-            <button
-              onClick={closeModal}
-              className="w-full bg-green-600 text-white py-4 px-6 rounded-lg hover:bg-green-700 font-bold text-xl"
-            >
-              {modal.button}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Negative Value Warning Modal */}
-      {showNegativeModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-2xl p-8 max-w-sm w-full mx-4">
-            <div className="text-center mb-6">
-              <div className="text-6xl mb-4">⚠️</div>
-              <h3 className="text-2xl font-bold text-red-600 mb-3">Cannot Accept Deal</h3>
-              <p className="text-lg text-gray-700">You can't accept a deal worth negative value.</p>
-            </div>
-            <button
-              onClick={() => setShowNegativeModal(false)}
-              className="w-full px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold"
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+    <DemoLayout
+      modal={modal}
+      onCloseModal={closeModal}
+      showNegativeModal={showNegativeModal}
+      onCloseNegative={() => setShowNegativeModal(false)}
+    >
+      <DemoUI
+        roleName={tutorialRole}
+        roleNarrative={demoNarrative}
+        roleBATNA={demoBATNA}
+        roleRP={demoRP}
+        displayData={displayData}
+        viewerFor={viewerFor}
+        onProposalSubmit={handleProposalSubmit}
+        onCopyOffer={() => saveCopyUsed(true)}
+        onVote={handleVote}
+        onFinalizeVote={handleFinalizeVote}
+      />
+    </DemoLayout>
   );
 }

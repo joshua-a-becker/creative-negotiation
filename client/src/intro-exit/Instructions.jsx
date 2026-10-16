@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "../components/Button.jsx";
 import { useGame } from "@empirica/core/player/classic/react";
+import { isTableMode } from "../components/tableScoring";
 
 export function Instructions({ next }) {
   const game = useGame();
@@ -9,11 +10,14 @@ export function Instructions({ next }) {
 
   const playerCount = game.get("treatment")?.playerCount || 3;
   const otherPlayers = playerCount - 1;
+  const tableMode = isTableMode(game.get("treatment"));
 
   const section1 = [
     <>In this activity, you must reach agreement with <span className="font-bold">{otherPlayers} other player{otherPlayers !== 1 ? "s" : ""}</span> on the terms of a hypothetical job offer.</>,
     <>You will be assigned a role with private information about which terms give you points, with some terms giving <span className="font-bold text-red-600">negative points</span>.</>,
-    <>You make proposals <span className="font-bold">in your own words</span>. The system reads each proposal and tells you what it is worth to you before you submit it.</>,
+    tableMode
+      ? <>You make proposals by selecting items from a table.</>
+      : <>You make proposals <span className="font-bold">in your own words</span>. The system reads each proposal and tells you what it is worth to you before you submit it.</>,
     <>You will seek to reach agreement on a proposal whose total value to you is <span className="font-bold text-green-600">positive</span>.</>,
     <>After the activity, you will receive a <span className="font-bold">bonus payment</span> equal to the number of points you earn (1 point = £1.00).</>,
   ];
