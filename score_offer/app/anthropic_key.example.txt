@@ -1,0 +1,2 @@
+Copy this file to anthropic_key.txt and replace this sentence with the Anthropic API key.
+Never commit anthropic_key.txt.

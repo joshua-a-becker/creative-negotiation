@@ -1,0 +1,121 @@
+scales:
+  agree_5:
+    - "Strongly disagree"
+    - "Somewhat disagree"
+    - "Neither agree nor disagree"
+    - "Somewhat agree"
+    - "Strongly agree"
+  experience_5:
+    - "None"
+    - "A little"
+    - "Some"
+    - "Quite a lot"
+    - "A great deal"
+
+questions:
+  - id: q1
+    n: 1
+    type: "likert"
+    scale: "agree_5"
+    label: "The role materials made my own priorities clear."
+
+  - id: q2
+    n: 2
+    type: "likert"
+    scale: "agree_5"
+    label: "The role materials helped me understand what may matter to the Recruiter."
+
+  - id: q3
+    n: 3
+    type: "likert"
+    scale: "agree_5"
+    label: "The role materials were easy to read and understand."
+
+  - id: q4
+    n: 4
+    type: "likert"
+    scale: "agree_5"
+    label: "It would be easy to get into character using this information."
+
+  - id: q5
+    n: 5
+    type: "likert"
+    scale: "agree_5"
+    label: "The preferences assigned to my role made sense."
+
+  - id: q6
+    n: 6
+    type: "open_text"
+    label: "In your own words, what three job-contract terms must appear in every offer?"
+    hint: "List the three required terms in your own words, one per line."
+
+  - id: q7
+    n: 7
+    type: "open_text"
+    label: "Based on the instructions, what first offer would you make?"
+    hint: "Write the complete offer in ordinary language, as if you were sending it to the other party."
+
+  - id: q8
+    n: 8
+    type: "single_select"
+    label: "Was it clear that you could include multiple job/contract features beyond the three required ones?"
+    style: "pills"
+    options:
+      - "Yes"
+      - "No"
+
+  - id: q9
+    n: 9
+    type: "open_text"
+    label: "Imagine that the Recruiter sends you this counteroffer:\n\nRecruiter’s counteroffer: “I can offer a $45,000 salary, an $8,000 personal work-expense budget and a 1 June starting date, with a six-month probation period.”\n\nWhat offer would you make to respond to them?"
+    hint: "Write a complete counteroffer in ordinary language."
+
+  - id: q10
+    n: 10
+    type: "open_text"
+    label: "What were you thinking about when you wrote this response?"
+    hint: "Briefly walk us through your reasoning."
+
+  - id: q11
+    n: 11
+    type: "open_text"
+    label: "Propose 3 other job features that could realistically be raised and included in an offer. You may add up to 2 more (maximum 5)."
+    hint: "Enter only the name of each job feature, one per line.\nList 3 features. You may add up to 2 more (maximum 5)."
+    placeholder: "1. [Job feature]\n2. [Job feature]\n3. [Job feature]"
+
+  - id: q12
+    n: 12
+    type: "multi_select"
+    label: "What do you think are the Recruiter’s most important priorities?"
+    hint: "Select all that you think apply."
+    options:
+      - "Keep employment and work-expense costs under control"
+      - "Get the new hire productive quickly"
+      - "Protect the company from hiring, client and information risks"
+      - "Give the Candidate as much vacation and remote work as possible"
+      - "Build the Candidate’s professional network outside the company"
+      - "Make it as easy as possible for the Candidate to leave for a competitor"
+      - "Delay the Candidate’s starting date as long as possible"
+      - "Guarantee long-term employment regardless of performance"
+
+  - id: q13
+    n: 13
+    type: "open_text"
+    label: "Do you have any other feedback about this case?"
+    hint: "Optional. Tell us what was unclear, unrealistic or worth improving."
+
+  - id: q14
+    n: 14
+    type: "likert"
+    label: "How much experience do you have negotiating in everyday life?"
+    scale: "experience_5"
+
+  - id: q15
+    n: 15
+    type: "single_select"
+    label: "Would you be interested in taking part in a future version of this study?"
+    style: "pills"
+    options:
+      - "Yes"
+      - "No"
+    hint: "If you select Yes, we may add you to a panel contacted when the study or another pre-test goes live. This choice does not affect your payment."

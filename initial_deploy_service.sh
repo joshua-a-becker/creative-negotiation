@@ -13,6 +13,9 @@ empirica bundle
 # Transfer bundle to server
 scp -i "$SSH_KEY_PATH" -o StrictHostKeyChecking=no "$BUNDLE_FILENAME" "$REMOTE_USER@$IP_ADDRESS:~/"
 
+# Transfer Scoring to server (before the service starts, so the scorer is found at startup)
+scp -r -i "$SSH_KEY_PATH" -o StrictHostKeyChecking=no ./score_offer "$REMOTE_USER@$IP_ADDRESS:~/"
+
 # Install Empirica and kill any existing empirica processes
 ssh -i "$SSH_KEY_PATH" -o StrictHostKeyChecking=no "$REMOTE_USER@$IP_ADDRESS" << EOF
 pkill -f empirica || true

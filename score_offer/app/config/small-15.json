@@ -1,0 +1,1251 @@
+{
+  "schema_version": "4.0",
+  "scenario_id": "flexible-15-approved-2026-09-14",
+  "title": "Sales job negotiation — 15 supported issues",
+  "condition": "Bounded hinted-issue set",
+  "required_issues": [
+    "Salary",
+    "Personal Budget",
+    "Starting Date"
+  ],
+  "invented_issues_enabled": false,
+  "zopa": {
+    "positive_threshold": 0,
+    "required_sample_count": 16384,
+    "all_issue_sample_count": 32768,
+    "optional_issue_inclusion_probability": 0.5,
+    "method": "Deterministic quasi-random sampling over the configured continuous ranges and optional-issue states.",
+    "explanation": "Each sampled package is scored for both roles. The jointly acceptable share is the proportion with a total strictly above zero for each party. Zero is not acceptable. This is an approximation, not an enumeration of infinitely many continuous offers.",
+    "acceptance_comparison": ">"
+  },
+  "roles": {
+    "Candidate": {
+      "private_issues": [
+        "Vacation Days",
+        "Remote Working Days"
+      ],
+      "summary": "Negotiate the terms of a sales role. Every complete offer must include salary, a personal work-expense budget, and a starting date. Use your private role information to decide what else matters to you.",
+      "full_text": "CANDIDATE ROLE INFORMATION\n\nYou are an ambitious job Candidate negotiating a sales role with a young company. You care about income, but money isn't all that matters in life. You want room to build a career, protect time with your family, and avoid getting stuck in a role where your work is visible but you are not developing professionally.\n\nYour objective is to reach an agreement with the highest total score you can, while recognizing that the Recruiter has priorities of their own that may conflict with yours. Every complete offer must include three terms: salary, a personal budget for work expenses such as client travel, meals, and lodging, and a starting date. The budget is an annual allowance for approved work expenses, not take-home pay. It lets you serve clients without paying those costs yourself; unused money stays with the company.\n\nYou prefer a higher salary and budget and an earlier start. Starting promptly would help restore your income and career momentum, while a long delay would be substantially more disruptive. Annual salary may range from $35,000 to $65,000: $35,000 gives you −2 points, $50,000 gives you 0, and $65,000 gives you +2. The personal budget may range from $5,000 to $15,000: $5,000 gives you −2, $10,000 gives you 0, and $15,000 gives you +2. Starting dates may range from 1 May to 30 September: 1 May gives you +1, around 8 June gives you 0, and 30 September gives you −3. The platform calculates intermediate scores automatically. For example, a $7,000 budget is worth about −1.2 points to you. You do not need to calculate this yourself.\n\nThese headline contract terms are easy to put numbers on. The interview also left you thinking about what the job would actually be like and what other terms you might ask for given what matters to you.\n\nBackground Information\n\nOn the way home, you think about the company's usual 30 vacation days per year and 3 remote-working days per week. Those arrangements seem reasonable. Each is worth 0 points to you. Still, more flexibility would mean more time with your family and more room for interests and professional development outside work, while less flexibility would work against those interests. For vacation, 10 days per year are worth −1 point to you and 50 days are worth +1. For remote work, 1 day per week is worth −1 and all 5 working days are worth +1. The two terms are scored separately, with proportional points for values in between.\n\nYou also remember the Recruiter's stories about how people grow in the company. One new hire attended an external professional training program; another was paired with an experienced mentor. Someone else built relationships with senior colleagues after volunteering at a recruitment fair. Those examples appealed to you because they offered concrete ways to learn and build relationships rather than vague promises of “growth.”\n\nOther stories were less appealing. The Recruiter joked that sociable employees often end up organizing team events. The company regularly shares strong client stories on social media. Employees close to those accounts may be asked to help shape the posts, and confident employees sometimes present at conferences. You enjoy people, but you do not want every spare hour turned into company visibility. A recruitment fair might expand your network; recurring publicity work might simply expand your workload.\n\nThat evening, your spouse asked whether the company would support the professional association that has helped you and what would happen if you eventually wanted to leave. Sponsored membership could help keep your skills and outside relationships alive. The question about leaving brought you back to the non-compete clause you had raised. You want to show commitment without unnecessarily limiting your future.\n\nThe interview contained small details and examples rather than a neat menu of contract features. Some may simply be background. Others could become useful terms if you connect them to what matters to you.\n\nINSTRUCTIONS\n\nNegotiate with the Recruiter by making offers in plain, ordinary language, as if you were writing them a short message. Every complete offer must include salary, a personal work-expense budget, and a starting date. You decide what else is worth discussing and when to raise it.\n\nFor example: “I propose a salary of [amount], a personal work-expense budget of [amount], and a starting date of [date], together with any other terms I choose to raise.” Use your own values and wording.\n\nYour score is private and translates directly into the bonus payment you can earn from this task. You may propose an offer worth zero or less to you, but you can accept only an offer worth more than zero to you. An agreement requires both parties to accept the same offer, with a positive total score for each. Individual terms may still be worth zero or less. Without a deal, you will continue your job search; you do not have another offer in hand. This fallback is worth 0 points.\n\nThe researchers set the scoring rules in advance, and the platform applies them automatically; you do not assign points yourself. Each additional supported feature is worth between −1 and +1 points to you, based on the interests in your role. Its value to the Recruiter may differ. Separate commitments are scored separately, even when offered as one package; rewording the same term does not earn extra points. You are limited to job features described or suggested in these materials. Features outside this set are not negotiable and do not affect your score.",
+      "full_blocks": [
+        {
+          "type": "heading",
+          "runs": [
+            {
+              "text": "CANDIDATE ROLE INFORMATION",
+              "bold": true,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "You are an ambitious job ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Candidate",
+              "bold": false,
+              "italic": true,
+              "underline": false
+            },
+            {
+              "text": " negotiating a sales role with a young company. You care about income, but money isn't all that matters in life. You want room to build a career, protect time with your family, and avoid getting stuck in a role where your work is visible but you are not developing professionally.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "Your objective is to reach an agreement with the highest total score you can, while recognizing that the ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Recruiter",
+              "bold": false,
+              "italic": true,
+              "underline": false
+            },
+            {
+              "text": " has priorities of their own that may conflict with yours. Every complete offer must include three terms: ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "salary",
+              "bold": true,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": ", a ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "personal budget",
+              "bold": true,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": " for work expenses such as client travel, meals, and lodging, and a ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "starting date",
+              "bold": true,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": ".",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": " The budget is an annual allowance for approved work expenses, not take-home pay. It lets you serve clients without paying those costs yourself; unused money stays with the company.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "You prefer a higher salary and budget and an earlier start. Starting promptly would help restore your income and career momentum, while a long delay would be substantially more disruptive. Annual salary may range from $35,000 to $65,000: $35,000 gives you −2 points, $50,000 gives you 0, and $65,000 gives you +2. The personal budget may range from $5,000 to $15,000: $5,000 gives you −2, $10,000 gives you 0, and $15,000 gives you +2. Starting dates may range from 1 May to 30 September: 1 May gives you +1, around 8 June gives you 0, and 30 September gives you −3. The platform calculates intermediate scores automatically. For example, a $7,000 budget is worth about −1.2 points to you. You do not need to calculate this yourself.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "These headline contract terms are easy to put numbers on. The interview also left you thinking about what the job would actually be like and what other terms you might ask for given what matters to you.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "runs": [
+            {
+              "text": "Background Information",
+              "bold": true,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "On the way home, you think about the company's ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "usual 30 vacation days per year and 3 remote-working days per week",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": ". ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Those arrangements seem reasonable. Each is worth 0 points to you.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": " Still, more flexibility would mean more time with your family and more room for interests and professional development outside work, while less flexibility would work against those interests. ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "For vacation, 10 days per year are worth −1 point to you and 50 days are worth +1. For remote work, 1 day per week is worth −1 and all 5 working days are worth +1. The two terms are scored separately, with proportional points for values in between.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "You also remember the ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Recruiter",
+              "bold": false,
+              "italic": true,
+              "underline": false
+            },
+            {
+              "text": "'s stories about how people grow in the company. One new hire attended an external professional training program; another was paired with an experienced mentor. Someone else built relationships with senior colleagues after volunteering at a recruitment fair. Those examples appealed to you because they offered concrete ways to learn and build relationships rather than vague promises of “growth.”",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "Other stories were less appealing. The ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Recruiter",
+              "bold": false,
+              "italic": true,
+              "underline": false
+            },
+            {
+              "text": " joked that sociable employees often end up organizing team events. The company regularly shares strong client stories on social media. Employees close to those accounts may be asked to help shape the posts, and confident employees sometimes present at conferences. You enjoy people, but you do not want every spare hour turned into company visibility. A recruitment fair might expand your network; recurring publicity work might simply expand your workload.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "That evening, your spouse asked whether the company would support the professional association that has helped you and what would happen if you eventually wanted to leave. Sponsored membership could help keep your skills and outside relationships alive. The question about leaving brought you back to the non-compete clause you had raised. You want to show commitment without unnecessarily limiting your future.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "The interview contained small details and examples rather than a neat menu of contract features. Some may simply be background. Others could become useful terms if you connect them to what matters to you.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "runs": [
+            {
+              "text": "INSTRUCTIONS",
+              "bold": true,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "Negotiate with the ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Recruiter",
+              "bold": false,
+              "italic": true,
+              "underline": false
+            },
+            {
+              "text": " by making offers in plain, ordinary language, as if you were writing them a short message. Every complete offer must include salary, a personal work-expense budget, and a starting date. You decide what else is worth discussing and when to raise it.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "For example: ",
+              "bold": true,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "“I propose a salary of [amount], a personal work-expense budget of [amount], and a starting date of [date], together with any other terms I choose to raise.”",
+              "bold": false,
+              "italic": true,
+              "underline": false
+            },
+            {
+              "text": " Use your own values and wording.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "Your score is private and translates directly into the bonus payment you can earn from this task. ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "You may propose an offer worth zero or less to you, but you can accept only an offer worth more than zero to you. An agreement requires both parties to accept the same offer, with a positive total score for each. Individual terms may still be worth zero or less.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": " ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Without a deal, you will continue your job search; you do not have another offer in hand. This fallback is worth 0 points.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "The researchers set the scoring rules in advance, and the platform applies them automatically; you do not assign points yourself. Each additional supported feature is worth between −1 and +1 points to you, based on the interests in your role. Its value to the Recruiter may differ. Separate commitments are scored separately, even when offered as one package; rewording the same term does not earn extra points. You are limited to job features described or suggested in these materials. Features outside this set are not negotiable and do not affect your score.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        }
+      ]
+    },
+    "Recruiter": {
+      "private_issues": [
+        "Probation Length",
+        "Contract Length"
+      ],
+      "summary": "Negotiate the terms of a sales hire. Every complete offer must include salary, a personal work-expense budget, and a starting date. Use your private role information to decide what else matters to the company.",
+      "full_text": "RECRUITER ROLE INFORMATION\n\nYou are an ambitious Recruiter at a young company negotiating with a promising sales candidate. You care about making a strong hire, but filling the role isn't all that matters. You want to control costs, get the new hire productive quickly, keep the team working well, and avoid commitments that leave the company exposed if the hire does not work out.\n\nYour objective is to reach an agreement with the highest total score you can, while recognizing that the Candidate has priorities of their own that may conflict with yours. Every complete offer must include three terms: salary, a personal budget for work expenses such as client travel, meals, and lodging, and a starting date. The budget is an annual allowance for approved work expenses, not take-home pay. It gives the new hire resources to serve clients; unused money stays with the company.\n\nYou prefer a lower salary and budget and an earlier start. Starting promptly would help fill the vacancy, while a long delay would leave the team covering the role and be substantially more costly. Annual salary may range from $35,000 to $65,000: $35,000 gives you +2 points, $50,000 gives you 0, and $65,000 gives you −2. The personal budget may range from $5,000 to $15,000: $5,000 gives you +2, $10,000 gives you 0, and $15,000 gives you −2. Starting dates may range from 1 May to 30 September: 1 May gives you +1, around 8 June gives you 0, and 30 September gives you −3. The platform calculates intermediate scores automatically. For example, a $7,000 budget is worth about +1.2 points to you. You do not need to calculate this yourself.\n\nThese headline contract terms are easy to put numbers on. The interview also left you thinking about what hiring this person would actually involve, what the Candidate might ask for, and what other terms could benefit the company.\n\nBackground Information\n\nLooking over your notes, you think about the company's usual 3-month probation period and 3-year contract. Those arrangements seem sensible. Each is worth 0 points to you. Still, the sales manager's description of the Candidate as “bright but raw” makes you cautious about committing too much before seeing how they perform. A longer probation gives the company more protection. For probation, no probation is worth −1 point to you and 6 months are worth +1. Contract length works in the other direction: 2 years are worth +1 point to you and 4 years are worth −1. The two terms are scored separately, with proportional points for values in between.\n\nYou also remember the Candidate's interest when you described the external professional training program and experienced employees who sometimes mentor new hires. Good development can turn a risky appointment into a strong performer and reflect well on your ability to spot talent. The Candidate was also curious about professional associations and recruitment fairs. Association sponsorship would cost the company money; a recruitment-fair role could help attract future candidates.\n\nOther parts of the conversation suggested different possibilities. The Candidate was personable and might be good at organizing occasional team events. The company regularly shares strong client stories on social media. Because the Candidate would be close to those accounts, they might be a natural person to help shape the posts. Conference presentations sounded less useful. Your manager sees them as costly distractions, and the Candidate did not seem eager to spend evenings preparing slides.\n\nThe Candidate's question about waiving the standard non-compete also stayed with you. You understand why future flexibility matters to them. But if they later leave for a competitor with knowledge of your clients, colleagues may ask why you gave up that protection. You want the new hire to develop and succeed without leaving the company unnecessarily exposed.\n\nThe interview contained small details and examples rather than a neat menu of contract features. Some may simply be background. Others could become useful terms if you connect them to what matters to the company.\n\nINSTRUCTIONS\n\nNegotiate with the Candidate by making offers in plain, ordinary language, as if you were writing them a short message. Every complete offer must include salary, a personal work-expense budget, and a starting date. You decide what else is worth discussing and when to raise it.\n\nFor example: “I propose a salary of [amount], a personal work-expense budget of [amount], and a starting date of [date], together with any other terms I choose to raise.” Use your own values and wording.\n\nYour score is private and translates directly into the bonus payment you can earn from this task. You may propose an offer worth zero or less to you, but you can accept only an offer worth more than zero to you. An agreement requires both parties to accept the same offer, with a positive total score for each. Individual terms may still be worth zero or less. Without a deal, you will keep recruiting while the existing team covers the vacancy. This fallback is worth 0 points.\n\nThe researchers set the scoring rules in advance, and the platform applies them automatically; you do not assign points yourself. Each additional supported feature is worth between −1 and +1 points to you, based on the interests in your role. Its value to the Candidate may differ. Separate commitments are scored separately, even when offered as one package; rewording the same term does not earn extra points. You are limited to job features described or suggested in these materials. Features outside this set are not negotiable and do not affect your score.",
+      "full_blocks": [
+        {
+          "type": "heading",
+          "runs": [
+            {
+              "text": "RECRUITER ROLE INFORMATION",
+              "bold": true,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "You are an ambitious ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Recruiter",
+              "bold": false,
+              "italic": true,
+              "underline": false
+            },
+            {
+              "text": " at a young company negotiating with a promising sales candidate. You care about making a strong hire, but filling the role isn't all that matters. You want to control costs, get the new hire productive quickly, keep the team working well, and avoid commitments that leave the company exposed if the hire does not work out.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "Your objective is to reach an agreement with the highest total score you can, while recognizing that the ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Candidate",
+              "bold": false,
+              "italic": true,
+              "underline": false
+            },
+            {
+              "text": " has priorities of their own that may conflict with yours. Every complete offer must include three terms: ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "salary",
+              "bold": true,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": ", a ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "personal budget",
+              "bold": true,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": " for work expenses such as client travel, meals, and lodging, and a ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "starting date",
+              "bold": true,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": ".",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": " The budget is an annual allowance for approved work expenses, not take-home pay. It gives the new hire resources to serve clients; unused money stays with the company.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "You prefer a lower salary and budget and an earlier start. Starting promptly would help fill the vacancy, while a long delay would leave the team covering the role and be substantially more costly. Annual salary may range from $35,000 to $65,000: $35,000 gives you +2 points, $50,000 gives you 0, and $65,000 gives you −2. The personal budget may range from $5,000 to $15,000: $5,000 gives you +2, $10,000 gives you 0, and $15,000 gives you −2. Starting dates may range from 1 May to 30 September: 1 May gives you +1, around 8 June gives you 0, and 30 September gives you −3. The platform calculates intermediate scores automatically. For example, a $7,000 budget is worth about +1.2 points to you. You do not need to calculate this yourself.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "These headline contract terms are easy to put numbers on. The interview also left you thinking about what hiring this person would actually involve, what the ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Candidate",
+              "bold": false,
+              "italic": true,
+              "underline": false
+            },
+            {
+              "text": " might ask for, and what other terms could benefit the company.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "runs": [
+            {
+              "text": "Background Information",
+              "bold": true,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "Looking over your notes, you think about the company's usual 3-month probation period and 3-year contract. ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Those arrangements seem sensible. Each is worth 0 points to you.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": " Still, the sales manager's description of the ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Candidate",
+              "bold": false,
+              "italic": true,
+              "underline": false
+            },
+            {
+              "text": " as “bright but raw” makes you cautious about committing too much before seeing how they perform. ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "A longer probation gives the company more protection. For probation, no probation is worth −1 point to you and 6 months are worth +1. Contract length works in the other direction: 2 years are worth +1 point to you and 4 years are worth −1. The two terms are scored separately, with proportional points for values in between.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "You also remember the ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Candidate",
+              "bold": false,
+              "italic": true,
+              "underline": false
+            },
+            {
+              "text": "'s interest when you described the external professional training program and experienced employees who sometimes mentor new hires. Good development can turn a risky appointment into a strong performer and reflect well on your ability to spot talent. The ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Candidate",
+              "bold": false,
+              "italic": true,
+              "underline": false
+            },
+            {
+              "text": " was also curious about professional associations and recruitment fairs. Association sponsorship would cost the company money; a recruitment-fair role could help attract future candidates.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "Other parts of the conversation suggested different possibilities. The ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Candidate",
+              "bold": false,
+              "italic": true,
+              "underline": false
+            },
+            {
+              "text": " was personable and might be good at organizing occasional team events. The company regularly shares strong client stories on social media. Because the Candidate would be close to those accounts, they might be a natural person to help shape the posts. Conference presentations sounded less useful. Your manager sees them as costly distractions, and the ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Candidate",
+              "bold": false,
+              "italic": true,
+              "underline": false
+            },
+            {
+              "text": " did not seem eager to spend evenings preparing slides.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "The ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Candidate",
+              "bold": false,
+              "italic": true,
+              "underline": false
+            },
+            {
+              "text": "'s question about waiving the standard non-compete also stayed with you. You understand why future flexibility matters to them. But if they later leave for a competitor with knowledge of your clients, colleagues may ask why you gave up that protection. You want the new hire to develop and succeed without leaving the company unnecessarily exposed.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "The interview contained small details and examples rather than a neat menu of contract features. Some may simply be background. Others could become useful terms if you connect them to what matters to the company.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "runs": [
+            {
+              "text": "INSTRUCTIONS",
+              "bold": true,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "Negotiate with the ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Candidate",
+              "bold": false,
+              "italic": true,
+              "underline": false
+            },
+            {
+              "text": " by making offers in plain, ordinary language, as if you were writing them a short message. Every complete offer must include salary, a personal work-expense budget, and a starting date. You decide what else is worth discussing and when to raise it.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "For example: ",
+              "bold": true,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "“I propose a salary of [amount], a personal work-expense budget of [amount], and a starting date of [date], together with any other terms I choose to raise.”",
+              "bold": false,
+              "italic": true,
+              "underline": false
+            },
+            {
+              "text": " Use your own values and wording.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "Your score is private and translates directly into the bonus payment you can earn from this task. ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "You may propose an offer worth zero or less to you, but you can accept only an offer worth more than zero to you. An agreement requires both parties to accept the same offer, with a positive total score for each. Individual terms may still be worth zero or less.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": " ",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            },
+            {
+              "text": "Without a deal, you will keep recruiting while the existing team covers the vacancy. This fallback is worth 0 points.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "runs": [
+            {
+              "text": "The researchers set the scoring rules in advance, and the platform applies them automatically; you do not assign points yourself. Each additional supported feature is worth between −1 and +1 points to you, based on the interests in your role. Its value to the Candidate may differ. Separate commitments are scored separately, even when offered as one package; rewording the same term does not earn extra points. You are limited to job features described or suggested in these materials. Features outside this set are not negotiable and do not affect your score.",
+              "bold": false,
+              "italic": false,
+              "underline": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "issues": [
+    {
+      "id": "salary",
+      "name": "Salary",
+      "group": "Required",
+      "required": true,
+      "kind": "continuous",
+      "value_type": "currency",
+      "unit": "USD per year",
+      "min": 35000,
+      "max": 65000,
+      "step": 1,
+      "payoff": {
+        "Candidate": {
+          "min": -2,
+          "max": 2
+        },
+        "Recruiter": {
+          "min": 2,
+          "max": -2
+        }
+      },
+      "samples": [
+        35000,
+        40000,
+        45000,
+        50000,
+        55000,
+        60000,
+        65000
+      ],
+      "payoff_knots": {
+        "Candidate": [
+          {
+            "value": 35000,
+            "points": -2
+          },
+          {
+            "value": 50000,
+            "points": 0
+          },
+          {
+            "value": 65000,
+            "points": 2
+          }
+        ],
+        "Recruiter": [
+          {
+            "value": 35000,
+            "points": 2
+          },
+          {
+            "value": 50000,
+            "points": 0
+          },
+          {
+            "value": 65000,
+            "points": -2
+          }
+        ]
+      },
+      "payoff_justification": "The narrower range answers participant realism feedback while preserving the same conflict: higher salary helps the Candidate and costs the Recruiter. The endpoints remain −2 and +2, with $50,000 worth 0 to both."
+    },
+    {
+      "id": "personal_budget",
+      "name": "Personal Budget",
+      "group": "Required",
+      "required": true,
+      "kind": "continuous",
+      "value_type": "currency",
+      "unit": "USD per year",
+      "min": 5000,
+      "max": 15000,
+      "step": 1,
+      "payoff": {
+        "Candidate": {
+          "min": -2,
+          "max": 2
+        },
+        "Recruiter": {
+          "min": 2,
+          "max": -2
+        }
+      },
+      "samples": [
+        5000,
+        7500,
+        10000,
+        12500,
+        15000
+      ],
+      "payoff_knots": {
+        "Candidate": [
+          {
+            "value": 5000,
+            "points": -2
+          },
+          {
+            "value": 10000,
+            "points": 0
+          },
+          {
+            "value": 15000,
+            "points": 2
+          }
+        ],
+        "Recruiter": [
+          {
+            "value": 5000,
+            "points": 2
+          },
+          {
+            "value": 10000,
+            "points": 0
+          },
+          {
+            "value": 15000,
+            "points": -2
+          }
+        ]
+      },
+      "payoff_justification": "The narrower annual expense-budget range is easier to view as plausible for one sales role. It preserves the same conflict and −2 to +2 payoff scale, with $10,000 worth 0 to both."
+    },
+    {
+      "id": "starting_date",
+      "name": "Starting Date",
+      "group": "Required",
+      "required": true,
+      "kind": "continuous",
+      "value_type": "date",
+      "unit": "calendar date",
+      "min": "2026-05-01",
+      "max": "2026-09-30",
+      "step": 1,
+      "payoff": {
+        "Candidate": {
+          "min": 1,
+          "max": -3
+        },
+        "Recruiter": {
+          "min": 1,
+          "max": -3
+        }
+      },
+      "samples": [
+        "2026-05-01",
+        "2026-06-01",
+        "2026-06-08",
+        "2026-07-16",
+        "2026-09-01",
+        "2026-09-30"
+      ]
+    },
+    {
+      "id": "probation_length",
+      "name": "Probation Length",
+      "group": "Recruiter private",
+      "required": false,
+      "kind": "continuous",
+      "value_type": "number",
+      "unit": "months",
+      "min": 0,
+      "max": 6,
+      "step": 0.5,
+      "payoff": {
+        "Candidate": {
+          "min": 1,
+          "max": -1
+        },
+        "Recruiter": {
+          "min": -1,
+          "max": 1
+        }
+      },
+      "samples": [
+        0,
+        1.5,
+        3,
+        4.5,
+        6
+      ]
+    },
+    {
+      "id": "contract_length",
+      "name": "Contract Length",
+      "group": "Recruiter private",
+      "required": false,
+      "kind": "continuous",
+      "value_type": "number",
+      "unit": "years",
+      "min": 2,
+      "max": 4,
+      "step": 0.25,
+      "payoff": {
+        "Candidate": {
+          "min": -1,
+          "max": 1
+        },
+        "Recruiter": {
+          "min": 1,
+          "max": -1
+        }
+      },
+      "samples": [
+        2,
+        2.5,
+        3,
+        3.5,
+        4
+      ]
+    },
+    {
+      "id": "vacation_days",
+      "name": "Vacation Days",
+      "group": "Candidate private",
+      "required": false,
+      "kind": "continuous",
+      "value_type": "number",
+      "unit": "days per year",
+      "min": 10,
+      "max": 50,
+      "step": 1,
+      "payoff": {
+        "Candidate": {
+          "min": -1,
+          "max": 1
+        },
+        "Recruiter": {
+          "min": 1,
+          "max": -1
+        }
+      },
+      "samples": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ]
+    },
+    {
+      "id": "remote_working_days",
+      "name": "Remote Working Days",
+      "group": "Candidate private",
+      "required": false,
+      "kind": "continuous",
+      "unit": "days per week",
+      "value_type": "number",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "payoff": {
+        "Candidate": {
+          "min": -1,
+          "max": 1
+        },
+        "Recruiter": {
+          "min": 1,
+          "max": -1
+        }
+      },
+      "samples": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": "professional_training",
+      "name": "Professional Training Program",
+      "group": "Hinted",
+      "required": false,
+      "kind": "discrete",
+      "options": [
+        {
+          "label": "Participation",
+          "Candidate": 1,
+          "Recruiter": 1
+        },
+        {
+          "label": "No participation",
+          "Candidate": 0,
+          "Recruiter": 0
+        }
+      ]
+    },
+    {
+      "id": "mentorship",
+      "name": "Mentorship Program",
+      "group": "Hinted",
+      "required": false,
+      "kind": "discrete",
+      "options": [
+        {
+          "label": "Participation",
+          "Candidate": 1,
+          "Recruiter": 1
+        },
+        {
+          "label": "No participation",
+          "Candidate": 0,
+          "Recruiter": 0
+        }
+      ]
+    },
+    {
+      "id": "recruitment_fair",
+      "name": "Role in Recruitment Fair",
+      "group": "Hinted",
+      "required": false,
+      "kind": "discrete",
+      "options": [
+        {
+          "label": "Commit",
+          "Candidate": 1,
+          "Recruiter": 1
+        },
+        {
+          "label": "No commitment",
+          "Candidate": 0,
+          "Recruiter": 0
+        }
+      ]
+    },
+    {
+      "id": "conference_presentations",
+      "name": "Mandatory Conference Presentations",
+      "group": "Hinted",
+      "required": false,
+      "kind": "discrete",
+      "options": [
+        {
+          "label": "Commit",
+          "Candidate": -1,
+          "Recruiter": -1
+        },
+        {
+          "label": "No commitment",
+          "Candidate": 0,
+          "Recruiter": 0
+        }
+      ]
+    },
+    {
+      "id": "non_compete",
+      "name": "Non-compete Clause",
+      "group": "Hinted",
+      "required": false,
+      "kind": "discrete",
+      "options": [
+        {
+          "label": "Waive",
+          "Candidate": 1,
+          "Recruiter": -1
+        },
+        {
+          "label": "Keep",
+          "Candidate": 0,
+          "Recruiter": 0
+        }
+      ]
+    },
+    {
+      "id": "professional_associations",
+      "name": "Professional Associations Membership",
+      "group": "Hinted",
+      "required": false,
+      "kind": "discrete",
+      "options": [
+        {
+          "label": "Firm sponsors",
+          "Candidate": 1,
+          "Recruiter": -1
+        },
+        {
+          "label": "No sponsorship",
+          "Candidate": 0,
+          "Recruiter": 0
+        }
+      ]
+    },
+    {
+      "id": "social_events",
+      "name": "Role in Organizing Social Events",
+      "group": "Hinted",
+      "required": false,
+      "kind": "discrete",
+      "options": [
+        {
+          "label": "Commitment",
+          "Candidate": -1,
+          "Recruiter": 1
+        },
+        {
+          "label": "No commitment",
+          "Candidate": 0,
+          "Recruiter": 0
+        }
+      ]
+    },
+    {
+      "id": "linkedin_posts",
+      "name": "Regular Social Media Posts for Company",
+      "group": "Hinted",
+      "required": false,
+      "kind": "discrete",
+      "options": [
+        {
+          "label": "Commitment",
+          "Candidate": -1,
+          "Recruiter": 1
+        },
+        {
+          "label": "No commitment",
+          "Candidate": 0,
+          "Recruiter": 0
+        }
+      ],
+      "definition": "Whether the employee regularly helps turn client stories into company social-media or other public updates.",
+      "aliases": [
+        "regular social media posts",
+        "company social posts",
+        "public updates about client work",
+        "help shape company updates"
+      ],
+      "payoff_justification": "Regular public posts give the company reusable visibility, which helps the Recruiter, but create recurring preparation and publicity work the Candidate would rather avoid. The broader label also reflects how participants naturally described social-media and public-communication work."
+    }
+  ],
+  "narrative_changes": [],
+  "parties": {
+    "Candidate": {
+      "slot": 1,
+      "name": "Candidate",
+      "short": "C"
+    },
+    "Recruiter": {
+      "slot": 2,
+      "name": "Recruiter",
+      "short": "R"
+    }
+  },
+  "proposal_rules": {
+    "require_positive_proposer": false,
+    "positive_threshold": 0,
+    "counterpart_score_affects_submission": false
+  },
+  "issue_space": {
+    "mode": "bounded",
+    "unknown_term_policy": "reject",
+    "description": "Only the required, private, and hinted features in the versioned ontology can enter a scored offer."
+  },
+  "material_source": {
+    "revision": "review-2026-09-07-ra-clarifications-r3",
+    "sha256": "67c5356b1a45dbc2acfd3a3a9011d9a994aedfe9f86dcc68f12f1a60044958c2"
+  },
+  "agreement_rules": {
+    "require_nonnegative_each_party": true,
+    "threshold": 0,
+    "require_positive_each_party": true,
+    "allow_zero": false,
+    "comparison": ">"
+  },
+  "scenario_variant": {
+    "id": "small_15",
+    "label": "Flexible 15 · three required terms",
+    "frozen": true
+  },
+  "material_revision": "human-feedback-2026-09-15-r1",
+  "material_revision_date": "2026-09-15",
+  "material_revision_note": "Approved human-feedback revision: narrower salary and expense-budget ranges; clearer social-media clue; Candidate role named immediately; INSTRUCTIONS heading; expanded version adds one broad benefits/resources clue without listing issues.",
+  "display_units": {
+    "Salary": "USD per year",
+    "Personal Budget": "USD per year",
+    "Vacation Days": "days per year",
+    "Remote Working Days": "days per week"
+  },
+  "frozen": true,
+  "revision_note": "Approved human-feedback revision: narrower salary and expense-budget ranges; clearer social-media clue; Candidate role named immediately; INSTRUCTIONS heading; expanded version adds one broad benefits/resources clue without listing issues.",
+  "payment": {
+    "money_per_payoff_point_usd_default": 1.0,
+    "agreement_bonus_cap_usd": null
+  }
+}

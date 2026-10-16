@@ -1,0 +1,2 @@
+Replace this line with your OpenAI API key and save the file as openai_key.txt.
+Do not commit openai_key.txt.

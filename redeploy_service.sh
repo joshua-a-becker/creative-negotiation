@@ -20,7 +20,7 @@ empirica bundle
 scp -i "$SSH_KEY_PATH" -o StrictHostKeyChecking=no "$BUNDLE_FILENAME" "$REMOTE_USER@$IP_ADDRESS:~/"
 
 # Transfer Scoring to server
-scp -r -i "$SSH_KEY_PATH" -o StrictHostKeyChecking=no ./../score_offer "$REMOTE_USER@$IP_ADDRESS:~/"
+scp -r -i "$SSH_KEY_PATH" -o StrictHostKeyChecking=no ./score_offer "$REMOTE_USER@$IP_ADDRESS:~/"
 
 
 # restart service

@@ -1,0 +1,11 @@
+app/node_modules/
+**/__pycache__/
+*.pyc
+**/anthropic_key.txt
+**/openai_key.txt
+*.sqlite
+*.sqlite-*
+.env
+.DS_Store
+Thumbs.db
+*.log

@@ -1,0 +1,157 @@
+{
+  "scenario_id": "community-make-and-meet-tutorial-v4",
+  "scenario_variant": {
+    "id": "tutorial",
+    "label": "Tutorial · community event venue",
+    "frozen": true
+  },
+  "validation_profile": "tutorial",
+  "title": "Community Make & Meet venue practice",
+  "summary": "A short practice negotiation between a community event organizer and a venue manager.",
+  "parties": {
+    "Candidate": { "slot": 1, "name": "Community Event Organizer", "short": "Organizer" },
+    "Recruiter": { "slot": 2, "name": "Venue Manager", "short": "Manager" }
+  },
+  "required_issues": ["Venue fee", "Event date", "Closing time"],
+  "proposal_rules": {
+    "require_positive_proposer": false,
+    "positive_threshold": 0,
+    "counterpart_score_affects_submission": false
+  },
+  "issue_space": {
+    "mode": "open_capture",
+    "unknown_term_policy": "capture_unscored"
+  },
+  "roles": {
+    "Candidate": {
+      "summary": "You are a Community Event Organizer negotiating with a Venue Manager. You want an affordable venue, enough planning time, and a relaxed evening for your Make & Meet.",
+      "full_text": "You are a Community Event Organizer negotiating with a Venue Manager to book a community hall. You are planning a relaxed Make & Meet where neighbors can try creative activities, share food, and meet local makers. Every offer must include a venue fee, an event date, and a closing time. The event can take place on any date in August or September next year. You prefer a lower fee, a later date, and a later closing time. The Venue Manager prefers a higher fee, an earlier date, and an earlier closing time because this makes the booking easier to staff and run. You may also negotiate practical details: ask to use the venue's projector or offer to bring your own; decide whether your volunteers or the venue staff will clean up; ask to cancel without a charge if you give notice; request early access to set up tables; and decide who provides door staff and refreshments."
+    },
+    "Recruiter": {
+      "summary": "You manage the venue. You want a fair fee, an earlier booking date, and a manageable closing time.",
+      "full_text": "You are the Venue Manager for a community hall considering a Make & Meet booking. Every offer must include a venue fee, an event date, and a closing time. The event can take place on any date in August or September next year. A higher fee supports the venue. An earlier date helps fill a quieter part of the calendar, and an earlier closing time lowers staffing costs. Projector use, cleanup, cancellation notice, early setup access, door staffing, and refreshments also affect the work and risk involved in the booking."
+    }
+  },
+  "practice": {
+    "participant_role": "Candidate",
+    "counterpart_role": "Recruiter",
+    "predetermined_replies": [
+      "I can offer the venue for $500 on August 22 next year, closing at 7:00 p.m. The projector is included if your volunteers handle cleanup.",
+      "My final practice offer is $475 for September 1 next year, closing at 8:00 p.m. The projector is included, your volunteers handle cleanup, free cancellation is allowed with notice, early setup access is included, and your volunteers provide the door staff and refreshments."
+    ]
+  },
+  "issues": [
+    {
+      "name": "Venue fee",
+      "definition": "The total price paid to rent the venue.",
+      "aliases": ["fee", "venue cost", "rental cost", "price", "cost of the venue", "hall price", "hall hire", "booking cost", "space rental"],
+      "required": true,
+      "kind": "continuous",
+      "value_type": "currency",
+      "unit": "USD",
+      "min": 100,
+      "max": 800,
+      "step": 25,
+      "samples": [100, 150, 300, 500, 800],
+      "payoff": {
+        "Candidate": { "min": 2.0, "max": -2.0 },
+        "Recruiter": { "min": -2.0, "max": 2.0 }
+      }
+    },
+    {
+      "name": "Event date",
+      "definition": "The calendar date when the community event takes place.",
+      "aliases": ["date", "day", "event day", "booking date", "start date"],
+      "required": true,
+      "kind": "continuous",
+      "value_type": "date",
+      "display_day": true,
+      "unit": "date",
+      "min": "2027-08-01",
+      "max": "2027-09-30",
+      "step": 1,
+      "samples": ["2027-08-01", "2027-08-15", "2027-09-01", "2027-09-15", "2027-09-30"],
+      "payoff": {
+        "Candidate": { "min": -1.0, "max": 1.0 },
+        "Recruiter": { "min": 1.0, "max": -1.0 }
+      }
+    },
+    {
+      "name": "Closing time",
+      "definition": "The time when the event ends and guests leave.",
+      "aliases": ["close", "closing", "end time", "finish time", "wrap up"],
+      "required": true,
+      "kind": "discrete",
+      "options": [
+        { "label": "5:00 p.m.", "Candidate": -1.0, "Recruiter": 1.0 },
+        { "label": "6:00 p.m.", "Candidate": -0.67, "Recruiter": 0.67 },
+        { "label": "7:00 p.m.", "Candidate": -0.33, "Recruiter": 0.33 },
+        { "label": "8:00 p.m.", "Candidate": 0.0, "Recruiter": 0.0 },
+        { "label": "9:00 p.m.", "Candidate": 0.33, "Recruiter": -0.33 },
+        { "label": "10:00 p.m.", "Candidate": 0.67, "Recruiter": -0.67 },
+        { "label": "11:00 p.m.", "Candidate": 1.0, "Recruiter": -1.0 }
+      ]
+    },
+    {
+      "name": "Projector",
+      "definition": "Who supplies the projector used for demonstrations.",
+      "aliases": ["projector", "screen", "presentation equipment", "AV equipment", "display screen"],
+      "kind": "discrete",
+      "options": [
+        { "label": "Venue projector included", "Candidate": 1.0, "Recruiter": -0.25 },
+        { "label": "Organizer brings a projector", "Candidate": -0.25, "Recruiter": 0.25 }
+      ]
+    },
+    {
+      "name": "Cleanup",
+      "definition": "Who cleans the room after the event.",
+      "aliases": ["cleanup", "cleaning", "tidy up", "clear the room", "leave the room clean"],
+      "kind": "discrete",
+      "options": [
+        { "label": "Organizer handles cleanup", "Candidate": -0.5, "Recruiter": 1.0 },
+        { "label": "Venue handles cleanup", "Candidate": 0.5, "Recruiter": -0.5 }
+      ]
+    },
+    {
+      "name": "Cancellation notice",
+      "definition": "Whether the organizer may cancel without a charge by giving notice.",
+      "aliases": ["cancellation", "cancel", "refund", "notice"],
+      "kind": "discrete",
+      "options": [
+        { "label": "Free cancellation allowed with notice", "Candidate": 0.75, "Recruiter": -0.5 },
+        { "label": "Booking is non-refundable", "Candidate": -0.75, "Recruiter": 0.75 }
+      ]
+    },
+    {
+      "name": "Setup access",
+      "definition": "Whether the organizer may enter before the event to prepare the room.",
+      "aliases": ["setup", "set up", "early access", "access before", "load in", "arrive early", "get in early"],
+      "kind": "discrete",
+      "options": [
+        { "label": "Early setup access included", "Candidate": 0.75, "Recruiter": -0.25 },
+        { "label": "No early setup access", "Candidate": -0.5, "Recruiter": 0.5 }
+      ]
+    },
+    {
+      "name": "Door staffing",
+      "definition": "Who provides people to welcome guests and manage the entrance.",
+      "aliases": ["door staff", "entrance staff", "check-in staff", "registration staff", "greeters", "door volunteers", "event security", "security staff"],
+      "kind": "discrete",
+      "options": [
+        { "label": "Venue provides door staff", "Candidate": 0.5, "Recruiter": -0.5 },
+        { "label": "Organizer provides door staff", "Candidate": -0.25, "Recruiter": 0.5 }
+      ]
+    },
+    {
+      "name": "Food and refreshments",
+      "definition": "Who provides food or refreshments for the event.",
+      "aliases": ["food", "free food", "refreshments", "snacks", "drinks", "catering", "food service"],
+      "kind": "discrete",
+      "options": [
+        { "label": "Venue provides refreshments at no extra charge", "Candidate": 0.5, "Recruiter": -0.5 },
+        { "label": "Organizer provides refreshments", "Candidate": -0.25, "Recruiter": 0.25 },
+        { "label": "No refreshments included", "Candidate": -0.5, "Recruiter": 0.5 }
+      ]
+    }
+  ]
+}
