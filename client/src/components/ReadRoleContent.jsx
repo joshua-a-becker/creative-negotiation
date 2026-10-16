@@ -10,6 +10,7 @@ export function ReadRoleContent({ profileComponent }) {
   const player = usePlayer();
   const game = useGame();
   const tips = game.get("tips") || "";
+  const readRoleInstructions = game.get("readRoleInstructions") || "";
   const roleName = player.get("roleName");
   const roleNarrative = player.get("roleNarrative");
   const roleBATNA = player.get("roleBATNA");
@@ -73,26 +74,13 @@ export function ReadRoleContent({ profileComponent }) {
           </h1>
         </div>
 
-        {/* Instructions at top */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-          <h2 className="text-xl font-bold text-blue-900 mb-3">How Negotiations Activities Work</h2>
-          <p className="text-gray-700 leading-relaxed">
-            This activity is based off a standard MBA classroom exercise.
-          </p><br/>
-          <p>
-            You have been assigned a specific role with unique objectives and priorities.
-          </p><br/>
-          <p>
-            Review your narrative below to understand your interests, goals, and points. During the negotiation, work together with the other participants to find a deal that everyone will accept.
-          </p><br/>
-          <ul className="list-disc list-outside pl-5 space-y-2 mt-2">
-            <li><strong>What determines how much I earn?</strong> Points earned from any agreement become your bonus on Prolific (1 point = £1.00). No agreement means no bonus.</li>
-            <li><strong>How can we reach an agreement?</strong> All three people must accept the same final proposal, which must be submitted officially in the system. A verbal agreement is not enough! You may need to submit and vote on multiple proposals to reach agreement.</li>
-            <li><strong>What happens if we don't reach an agreement?</strong> If your group does not reach an agreement, everyone will keep working from home. This outcome is worth 0 points. (No bonus.)</li>
-            <li><strong>What if my group is incomplete?</strong> If someone quits or stops responding, you may end the game early by clicking the 'quit' button.</li>
-            <li><strong>How should I prepare?</strong> Get into character! Think about how you would introduce yourself, what you want, and how you might advocate for your best outcome.</li>
-          </ul>
-        </div>
+        {/* Instructions at top: readrole_instructions (HTML) from the role JSON; hidden when absent */}
+        {readRoleInstructions.trim() && (
+          <div
+            className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8 prose prose-gray max-w-none"
+            dangerouslySetInnerHTML={{ __html: readRoleInstructions }}
+          />
+        )}
 
           {/* 1. Narrative Section */}
           <div className="bg-white rounded-lg shadow-md p-6">

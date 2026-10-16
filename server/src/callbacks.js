@@ -222,7 +222,7 @@ function fetchJSON(urlOrPath) {
 
 function loadRolesData(roleDataURL) {
   const sources = String(roleDataURL || "").split(/[,\s]+/).filter(Boolean);
-  const merged = { roles: [], tips: "", scenario: null, scenarioUrl: "" };
+  const merged = { roles: [], tips: "", readRoleInstructions: "", scenario: null, scenarioUrl: "" };
   for (const src of sources) {
     const data = fetchJSON(src);
     if (data.roles && !Array.isArray(data.roles) && typeof data.roles === "object") {
@@ -244,6 +244,7 @@ function loadRolesData(roleDataURL) {
       console.log(`Loaded ${roles.length} role(s) (legacy) from ${src}`);
     }
     if (!merged.tips && data.tips) merged.tips = data.tips;
+    if (!merged.readRoleInstructions && data.readrole_instructions) merged.readRoleInstructions = data.readrole_instructions;
   }
   return merged;
 }
@@ -391,6 +392,8 @@ Empirica.onGameStart(({ game }) => {
 
   // Store tips in game state for client access
   game.set("tips", rolesData.tips || "");
+  // "How it works" box on the read-role page (HTML); hidden when empty.
+  game.set("readRoleInstructions", rolesData.readRoleInstructions || "");
 
   // Scorer scenario (issues, ranges, payoffs) travels with the role JSON.
   let scorerScenarioFile = "";
