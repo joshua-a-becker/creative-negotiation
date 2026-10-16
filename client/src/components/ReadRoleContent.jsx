@@ -76,10 +76,14 @@ export function ReadRoleContent({ profileComponent }) {
 
         {/* Instructions at top: readrole_instructions (HTML) from the role JSON; hidden when absent */}
         {readRoleInstructions.trim() && (
-          <div
-            className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8 prose prose-gray max-w-none"
-            dangerouslySetInnerHTML={{ __html: readRoleInstructions }}
-          />
+          <>
+            {/* prose gives the first heading a top margin; the box's padding is enough */}
+            <style>{`.readrole-instructions > :first-child { margin-top: 0; } .readrole-instructions > :last-child { margin-bottom: 0; }`}</style>
+            <div
+              className="readrole-instructions bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8 prose prose-gray max-w-none"
+              dangerouslySetInnerHTML={{ __html: readRoleInstructions }}
+            />
+          </>
         )}
 
           {/* 1. Narrative Section */}
