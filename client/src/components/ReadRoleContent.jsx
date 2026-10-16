@@ -1,8 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { usePlayer, useGame } from "@empirica/core/player/classic/react";
 import { RoleNarrative } from "./RoleNarrative";
 import { ScoringCalculator } from "./negotiationDisplay";
 import { useOfferScoring } from "./useOfferScoring";
+import { NotesBox } from "./NotesBox";
 
 export function ReadRoleContent({ profileComponent }) {
   const player = usePlayer();
@@ -13,16 +14,25 @@ export function ReadRoleContent({ profileComponent }) {
   const roleBATNA = player.get("roleBATNA");
   const roleRP = player.get("roleRP");
   const [showFade, setShowFade] = useState(false);
-  const scrollContainerRef = useRef(null);
+  const [moreBelow, setMoreBelow] = useState(false);
   const { offerText, setOfferText, calculating, scoreResult, calculate } = useOfferScoring({ role: roleName });
 
-  // Handle scroll to show/hide fade
-  const handleScroll = () => {
-    if (scrollContainerRef.current) {
-      const scrollTop = scrollContainerRef.current.scrollTop;
-      setShowFade(scrollTop > 10);
-    }
-  };
+  // The page scrolls as a whole; show the fade under the profile bar once scrolled.
+  useEffect(() => {
+    // ...and one at the bottom of the window while there's more page below.
+    const handleScroll = () => {
+      setShowFade(window.scrollY > 10);
+      const doc = document.documentElement;
+      setMoreBelow(window.scrollY + window.innerHeight < doc.scrollHeight - 4);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, [roleNarrative, tips, scoreResult, calculating]);
 
   if (!roleName || !roleNarrative) {
     return (
@@ -33,7 +43,7 @@ export function ReadRoleContent({ profileComponent }) {
   }
 
   return (
-    <div className="w-full h-full flex flex-col bg-gray-50">
+    <div className="w-full min-h-screen bg-gray-50">
       {/* Profile bar at top - sticky */}
       <div className="sticky top-0 z-20 bg-gray-50">
         {profileComponent}
@@ -41,15 +51,15 @@ export function ReadRoleContent({ profileComponent }) {
 
       {/* Fade overlay at top - only show when scrolled, positioned below profile border */}
       {showFade && (
-        <div className="absolute top-[3.6rem] left-0 right-0 h-8 bg-gradient-to-b from-gray-50 to-transparent pointer-events-none z-10"></div>
+        <div className="fixed top-[3.6rem] left-0 right-[22rem] h-8 bg-gradient-to-b from-gray-50 to-transparent pointer-events-none z-10"></div>
       )}
 
-      {/* Main content */}
-      <div
-        ref={scrollContainerRef}
-        onScroll={handleScroll}
-        className="flex-1 overflow-auto relative"
-      >
+      {/* Main content scrolls with the page; right padding leaves room for the fixed notes column */}
+      {moreBelow && (
+        <div className="fixed bottom-0 left-0 right-[22rem] h-16 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none z-10"></div>
+      )}
+
+      <div className="pr-[22rem]">
         <div className="max-w-5xl mx-auto px-8 py-8 space-y-6">
 
         {/* Prominent header */}
@@ -129,6 +139,13 @@ export function ReadRoleContent({ profileComponent }) {
           </div>
         </div>
       </div>
+
+      {/* Notes column: fixed in place while the page scrolls */}
+      <aside className="fixed right-8 top-[5.6rem] bottom-8 w-80 z-10 bg-white rounded-lg shadow-md p-4 flex flex-col">
+        <h3 className="text-lg font-bold text-gray-900 mb-2">Your Notes</h3>
+        <p className="text-xs text-gray-500 mb-3">Your notes will still be here during the negotiation.</p>
+        <NotesBox className="flex-1" />
+      </aside>
     </div>
   );
 }

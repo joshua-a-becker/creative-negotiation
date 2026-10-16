@@ -53,10 +53,16 @@ factors:
         - value: https://raw.githubusercontent.com/joshua-a-becker/creative-negotiation/refs/heads/main/roles/scoring_scenario_200.json
         - value: https://raw.githubusercontent.com/SamQuinto/Describing-Search-in-Negotiations/refs/heads/main/shared_office_3p_easy.json
         - value: https://raw.githubusercontent.com/SamQuinto/Describing-Search-in-Negotiations/refs/heads/main/shared_office_3p_hard.json
+    - name: experimentalTreatmentText
+      desc: Text shown above the role narrative in the negotiation stage.
+      values:
+        - value: This is placeholder text
+        - value: this text comes from the treatment
 treatments:
     - name: test
       factors:
         batchFullEndingMessage: 'Unfortunately, there are too many people interested in the study and all study slots have been taken for now. Rather than rejecting your submission, we want to pay you partially for your time, so we kindly ask that you return the study on Prolific by clicking <a href="https://app.prolific.com/submissions/complete?cc=CNUVAKO5" style="color: blue; text-decoration: underline; font-weight: bold;">this link</a>. There is no need to contact the researcher. '
+        experimentalTreatmentText: this text comes from the treatment
         gameTerminatedEndingMessage: 'The game ended prematurely because the study window ended or an error occurred. Rather than rejecting your submission, we want to pay you partially for the time and work you have completed, so we kindly ask that you return the study on Prolific by clicking <a href="https://app.prolific.com/submissions/complete?cc=CYHATDNN" style="color: blue; text-decoration: underline; font-weight: bold;">this link</a>. There is no need to contact the researcher.'
         negotiateTime: 7200
         noAgreementEndingMessage: 'You did not reach an agreement. You will receive the base payment in full, but your bonus payment is £0. To complete the task and claim your payment, please click <a href="https://app.prolific.com/submissions/complete?cc=C1G07N5A" style="color: blue; text-decoration: underline; font-weight: bold;">this link</a> to be redirected to Prolific. There is no need to contact the researcher. '

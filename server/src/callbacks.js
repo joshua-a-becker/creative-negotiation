@@ -262,6 +262,8 @@ function writeScenarioFile(scenario, scenarioUrl) {
   return file;
 }
 
+const scoringInFlight = new Set();
+
 // NOTE: Empirica attribute listeners receive (ctx, { player, <key> }) — the
 // event context comes first, the payload second.
 Empirica.on("player", "calculateHistory", async (_ctx, { player, calculateHistory }) => {
@@ -270,6 +272,9 @@ Empirica.on("player", "calculateHistory", async (_ctx, { player, calculateHistor
   if (!last || last.kind !== "request" || !last.id) return;
   // Already answered (e.g. a replay of the same vector).
   if (history.some((e) => e.kind === "response" && e.requestId === last.id)) return;
+  // Already being scored (scoring runs in the background, see below).
+  if (scoringInFlight.has(last.id)) return;
+  scoringInFlight.add(last.id);
 
   const text = String(last.text || "").trim();
   const previousText = String(last.previousText || "");
@@ -286,23 +291,33 @@ Empirica.on("player", "calculateHistory", async (_ctx, { player, calculateHistor
     : (player.get("scorerRole") || last.role || player.get("roleName") || "");
   console.log(`[scorer] request ${last.id} from player ${player.id} (${role}), ${text.length} chars, ${SCORER_ENABLED ? "python" : "mock"}`);
 
+  // Score in the background. Empirica runs attribute listeners one at a time,
+  // so awaiting the scorer (~9 s) here would hold up every other attribute
+  // event — including stage submits, leaving players on "Please wait" until
+  // scoring finished. Writes made outside a listener are queued until the next
+  // flush, so flush explicitly once the response is appended.
   const started = Date.now();
   const response = { kind: "response", requestId: last.id, text, role, scenario: last.scenario || null, mock: !SCORER_ENABLED, timestamp: Date.now() };
-  try {
-    response.score = await scoreOffer({ text, role, previousText, issueSpace, scenarioFile });
-    console.log(`[scorer] request ${last.id} → ${response.score?.decision} in ${Date.now() - started}ms`);
-    response.error = null;
-  } catch (err) {
-    console.error(`[scorer] request ${last.id} failed:`, err);
-    response.score = null;
-    response.error = String(err?.message || err);
-  }
+  (async () => {
+    try {
+      response.score = await scoreOffer({ text, role, previousText, issueSpace, scenarioFile });
+      console.log(`[scorer] request ${last.id} → ${response.score?.decision} in ${Date.now() - started}ms`);
+      response.error = null;
+    } catch (err) {
+      console.error(`[scorer] request ${last.id} failed:`, err);
+      response.score = null;
+      response.error = String(err?.message || err);
+    }
 
-  // Re-read before appending: the client may have added another request while
-  // the scorer was running, and we must not clobber it.
-  const current = player.get("calculateHistory") || [];
-  if (current.some((e) => e.kind === "response" && e.requestId === last.id)) return;
-  player.set("calculateHistory", [...current, response]);
+    // Re-read before appending: the client may have added another request while
+    // the scorer was running, and we must not clobber it.
+    const current = player.get("calculateHistory") || [];
+    if (current.some((e) => e.kind === "response" && e.requestId === last.id)) return;
+    player.set("calculateHistory", [...current, response]);
+    await Empirica.flush();
+  })()
+    .catch((err) => console.error(`[scorer] request ${last.id} could not be saved:`, err))
+    .finally(() => scoringInFlight.delete(last.id));
 });
 
 // Value of a stored proposal to a given player, mirroring viewerScore() in

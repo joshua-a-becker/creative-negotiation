@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { RoleNarrative } from "./RoleNarrative";
+import { NotesBox } from "./NotesBox";
 import { usePlayer, useStage, useRound, useGame } from "@empirica/core/player/classic/react";
 import { DailyCallContext } from "../App";
 import { useOfferScoring } from "./useOfferScoring";
@@ -23,7 +24,7 @@ export function MaterialsPanel({
   const stage = useStage();
   const round = useRound();
   const game = useGame();
-  const { playerCount } = game.get("treatment");
+  const { playerCount, experimentalTreatmentText } = game.get("treatment");
 
   const threshold = batnaThreshold(roleRP);
 
@@ -35,7 +36,9 @@ export function MaterialsPanel({
     previousText: currentProposal?.text || "",
   });
   const [showFinalizeModal, setShowFinalizeModal] = useState(false);
-  const [showNegativePointsModal, setShowNegativePointsModal] = useState(false);
+  // null, or which action was blocked for being worth negative value: "accept" | "submit"
+  const [negativeValueAction, setNegativeValueAction] = useState(null);
+  const [roleTab, setRoleTab] = useState("narrative"); // "narrative" | "notes"
   const [showBlankProposalModal, setShowBlankProposalModal] = useState(false);
   const [submitErrorMsg, setSubmitErrorMsg] = useState("");
 
@@ -50,6 +53,18 @@ export function MaterialsPanel({
   const [welcomeSecondsLeft, setWelcomeSecondsLeft] = useState(WELCOME_LOCK_SECONDS);
 
   const proposalsColumnRef = useRef(null);
+  // Bottom fade on the role narrative while there's more to scroll.
+  const roleScrollRef = useRef(null);
+  const [roleMoreBelow, setRoleMoreBelow] = useState(false);
+  const updateRoleMoreBelow = () => {
+    const el = roleScrollRef.current;
+    setRoleMoreBelow(!!el && el.scrollTop + el.clientHeight < el.scrollHeight - 4);
+  };
+  useEffect(() => {
+    updateRoleMoreBelow();
+    window.addEventListener("resize", updateRoleMoreBelow);
+    return () => window.removeEventListener("resize", updateRoleMoreBelow);
+  }, [roleTab, roleNarrative, experimentalTreatmentText]);
   const [wiggleStoppedId, setWiggleStoppedId] = useState(null); // proposal id whose wiggle the user interrupted
 
   // Compute proposal state from vote counts (derived state, no useEffect needed)
@@ -80,6 +95,8 @@ export function MaterialsPanel({
 
   // Determine what to show
   const pendingProposal = proposalState === "collecting-initial" ? currentProposal : null;
+  // The proposer auto-votes "accept" on submit, so their own proposal needs no attention cues.
+  const isOwnPending = pendingProposal?.submittedBy === player.id;
 
   // Determine if we should show the finalize modal (persist even after voting completes)
   let acceptedPendingProposal = null;
@@ -151,6 +168,13 @@ export function MaterialsPanel({
       return;
     }
 
+    // Same rule as voting: you can't put forward a deal worth negative value to you.
+    const ownValue = proposalValue(scoreResult, { roleName, isProposer: true });
+    if (ownValue !== null && ownValue < 0) {
+      setNegativeValueAction("submit");
+      return;
+    }
+
     const newProposal = {
       id: `${Date.now()}-${player.id}`,
       submittedBy: player.id,
@@ -159,7 +183,8 @@ export function MaterialsPanel({
       timestamp: Date.now(),
       text: scoreResult.text,
       score: scoreResult.score,
-      initialVotes: {},
+      // Proposer automatically votes "accept" on their own proposal.
+      initialVotes: { [player.id]: "accept" },
       finalVotes: {},
       modalDismissed: {}
     };
@@ -173,7 +198,7 @@ export function MaterialsPanel({
       const proposal = history.find(p => p.id === proposalId);
       const value = proposal ? proposalValue(proposal, viewerFor(proposal)) : null;
       if (value !== null && value < 0) {
-        setShowNegativePointsModal(true);
+        setNegativeValueAction("accept");
         return;
       }
     }
@@ -232,16 +257,46 @@ export function MaterialsPanel({
 
       {/* Two columns: narrative on the left, proposals on the right */}
       <div className="flex-1 min-h-0 flex gap-4">
-        {/* Narrative column (scrolls independently) */}
-        <div className="w-1/2 min-w-0 h-full overflow-y-auto pb-12">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Your Role
-            </h3>
-            [experimental treatment goes here]
-            <div className="prose prose-gray max-w-none text-gray-700 leading-snug prose-p:my-2 prose-li:my-0.5 prose-headings:my-3">
-              <RoleNarrative>{roleNarrative}</RoleNarrative>
+        {/* Narrative column: header + tabs stay put, only the tab content scrolls */}
+        <div className="w-1/2 min-w-0 h-full pb-12 flex flex-col">
+          <div className="flex-1 min-h-0 bg-white rounded-lg shadow-md p-6 flex flex-col">
+            <div className="shrink-0 flex items-center justify-between gap-4 mb-4">
+              <h3 className="text-2xl font-bold text-gray-900">
+                {roleTab === "notes" ? "Your Notes" : "Your Role"}
+              </h3>
+              <div className="flex gap-1 p-1 bg-gray-200 rounded-lg">
+                {[["narrative", "Role"], ["notes", "Notes"]].map(([tab, label]) => (
+                  <button
+                    key={tab}
+                    onClick={() => setRoleTab(tab)}
+                    className={`px-6 py-2 rounded-md text-base font-bold transition-all ${
+                      roleTab === tab
+                        ? "bg-blue-600 text-white shadow"
+                        : "text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
             </div>
+            {roleTab === "notes" ? (
+              <NotesBox className="flex-1 min-h-0" />
+            ) : (
+              <div className="flex-1 min-h-0 relative">
+              <div ref={roleScrollRef} onScroll={updateRoleMoreBelow} className="h-full overflow-y-auto">
+                {experimentalTreatmentText && (
+                  <p className="text-gray-700 mb-4">{experimentalTreatmentText}</p>
+                )}
+                <div className="prose prose-gray max-w-none text-gray-700 leading-snug prose-p:my-2 prose-li:my-0.5 prose-headings:my-3">
+                  <RoleNarrative>{roleNarrative}</RoleNarrative>
+                </div>
+              </div>
+              {roleMoreBelow && (
+                <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+              )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -287,7 +342,7 @@ export function MaterialsPanel({
               <div
                 onClick={() => setWiggleStoppedId(pendingProposal.id)}
                 className={`bg-white rounded-lg shadow-md p-6 ${
-                  wiggleStoppedId === pendingProposal.id ? "" : "animate-wiggle"
+                  isOwnPending || wiggleStoppedId === pendingProposal.id ? "" : "animate-wiggle"
                 }`}
               >
                 <div className="flex items-center justify-between mb-4">
@@ -308,9 +363,15 @@ export function MaterialsPanel({
                       {pendingProposal.initialVotes[player.id] ? (
                         <div className="text-center p-4 bg-gray-100 rounded mb-4">
                           <p className="text-sm text-gray-600">
-                            You voted: <span className="font-bold">
-                              {pendingProposal.initialVotes[player.id] === "accept" ? "✓ Accept" : "✗ Reject"}
-                            </span>
+                            {isOwnPending ? (
+                              <span className="font-bold">Your proposal</span>
+                            ) : (
+                              <>
+                                You voted: <span className="font-bold">
+                                  {pendingProposal.initialVotes[player.id] === "accept" ? "✓ Accept" : "✗ Reject"}
+                                </span>
+                              </>
+                            )}
                           </p>
                           <p className="text-xs text-gray-500 mt-1">
                             Waiting for other players... ({Object.keys(pendingProposal.initialVotes).length}/{playerCount} voted)
@@ -541,20 +602,22 @@ export function MaterialsPanel({
       )}
 
       {/* Negative Value Warning Modal */}
-      {showNegativePointsModal && (
+      {negativeValueAction && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-2xl p-8 max-w-sm w-full mx-4">
             <div className="text-center mb-6">
               <div className="text-6xl mb-4">⚠️</div>
               <h3 className="text-2xl font-bold text-red-600 mb-3">
-                Cannot Accept Deal
+                {negativeValueAction === "submit" ? "Cannot Submit Proposal" : "Cannot Accept Deal"}
               </h3>
               <p className="text-lg text-gray-700">
-                You can't accept a deal worth negative value.
+                {negativeValueAction === "submit"
+                  ? "You can't propose a deal worth negative value."
+                  : "You can't accept a deal worth negative value."}
               </p>
             </div>
             <button
-              onClick={() => setShowNegativePointsModal(false)}
+              onClick={() => setNegativeValueAction(null)}
               className="w-full px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold"
             >
               OK
