@@ -41,7 +41,7 @@ export function MaterialsPanel({
   const stage = useStage();
   const round = useRound();
   const game = useGame();
-  const { playerCount, experimentalTreatmentText } = game.get("treatment");
+  const { playerCount, experimentalTreatmentText, mainPlaceholderText } = game.get("treatment");
 
   const threshold = batnaThreshold(roleRP);
 
@@ -381,6 +381,7 @@ export function MaterialsPanel({
                   result={scoreResult}
                   roleRP={roleRP}
                   roleName={roleName}
+                  placeholder={mainPlaceholderText}
                   footer={submitButton}
                 />
               );

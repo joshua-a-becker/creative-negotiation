@@ -293,7 +293,7 @@ export function ScoringCalculator({
             onKeyDown={submitKeyDown}
             disabled={calculating}
             rows={9}
-            placeholder={placeholder || "Describe your offer in your own words, e.g.\nSalary: $70,000 per year\nPersonal budget: $5,000\nStarting date: June 1"}
+            placeholder={placeholder}
             className="w-full flex-1 rounded border border-gray-300 bg-white p-3 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 disabled:bg-gray-100 resize-y"
           />
           <div className="flex items-center justify-between mt-2 gap-2">

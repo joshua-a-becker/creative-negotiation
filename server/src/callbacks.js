@@ -400,7 +400,11 @@ Empirica.onRoundEnded(({ round }) => {
 });
 
 Empirica.onGameStart(({ game }) => {
-
+  // scoringMode has no default (client isTableMode throws on anything else).
+  const scoringMode = game.get("treatment")?.scoringMode;
+  if (scoringMode !== "table" && scoringMode !== "freetext") {
+    console.error(`Treatment factor scoringMode must be "table" or "freetext" (got ${JSON.stringify(scoringMode)}); the client will not render.`);
+  }
 
   const roleDataURL = game.get("treatment").roleDataURL;
   const rolesData = loadRolesData(roleDataURL);

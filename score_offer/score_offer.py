@@ -27,20 +27,34 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Score one Candidate-Recruiter offer.")
     parser.add_argument("--role", choices=("Candidate", "Recruiter"), default="Candidate")
     parser.add_argument("--issue-space", choices=("tutorial", "15", "200", "215", "fixed-15"), default=os.environ.get("SCORER_DEFAULT_SPACE", "15"), help="15/200/215 use flexible materials; fixed-15 requires all 15 terms.")
-    parser.add_argument("--text", help="Offer text. If omitted, the program asks for it.")
+    inputs = parser.add_mutually_exclusive_group()
+    inputs.add_argument("--text", help="Offer text. If omitted, the program asks for it.")
+    inputs.add_argument("--choices-json", help="JSON object of explicit issue choices; scores without an LLM call.")
     parser.add_argument("--json", action="store_true", help="Print the complete structured result.")
     parser.add_argument("--scenario-file", help="Path to an external scenario JSON (both roles' issues/ranges/payoffs); overrides --issue-space.")
     args = parser.parse_args()
 
-    offer_text = clean_unicode(args.text if args.text is not None else input("Offer text: ")).strip()
-    if not offer_text:
-        print("Please provide an offer.", file=sys.stderr)
-        return 2
+    if args.choices_json is not None:
+        try:
+            choices = json.loads(args.choices_json)
+            if not isinstance(choices, dict) or not choices:
+                raise ValueError('Expected a non-empty object of issue choices.')
+        except (ValueError, TypeError) as exc:
+            print(f'Invalid --choices-json: {exc}', file=sys.stderr)
+            return 2
+        payload = {'choices': choices}
+    else:
+        offer_text = clean_unicode(args.text if args.text is not None else input("Offer text: ")).strip()
+        if not offer_text:
+            print("Please provide an offer.", file=sys.stderr)
+            return 2
+        payload = {"text": offer_text, "previous_offer": ""}
 
     scenario_files = {"tutorial": "tutorial.json", "15": "small-15.json", "200": "large-200.json", "215": "large-215.json", "fixed-15": "fixed-15.json"}
     scenario = Path(args.scenario_file).resolve() if args.scenario_file else CONFIG / scenario_files[args.issue_space]
-    if SHARED_KEYS.is_dir():
-        os.environ.setdefault("CREATIVE_NEGOTIATIONS_KEYS_DIR", str(SHARED_KEYS))
+    if not SCORER.is_file() or not scenario.is_file():
+        print("Scorer or scenario file not found. Keep empirica/ beside app/ and check --scenario-file.", file=sys.stderr)
+        return 2
     environment = {
         **os.environ,
         "PYTHONIOENCODING": "utf-8",
@@ -52,9 +66,11 @@ def main() -> int:
         "NEGOTIATOR_SCORER_ROUTING": os.environ.get("NEGOTIATOR_SCORER_ROUTING", "nano-luna"),
         "NEGOTIATOR_SCENARIO_FILE": str(scenario),
     }
+    if SHARED_KEYS.is_dir():
+        environment.setdefault("CREATIVE_NEGOTIATIONS_KEYS_DIR", str(SHARED_KEYS))
     completed = subprocess.run(
         [sys.executable, str(SCORER)],
-        input=json.dumps({"text": offer_text, "previous_offer": ""}, ensure_ascii=False),
+        input=json.dumps(payload, ensure_ascii=True),
         text=True,
         encoding="utf-8",
         capture_output=True,

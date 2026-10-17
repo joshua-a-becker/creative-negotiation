@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { useGame } from "@empirica/core/player/classic/react";
 import { RoleNotesCard } from "../components/RoleNotesCard";
 import {
   ScoringCalculator,
@@ -17,7 +18,7 @@ import {
   TableScoringCalculator,
   TableProposalDetails,
 } from "../components/tableScoring";
-import { tutorialScenario, tutorialRole, demoOfferPlaceholder } from "./demoContent";
+import { tutorialScenario, tutorialRole } from "./demoContent";
 
 /**
  * DemoUI - the negotiation panel for the tutorial. Same two-column layout as
@@ -42,6 +43,7 @@ export function DemoUI({
   onFinalizeVote,
   tableScoresheet = null,
 }) {
+  const game = useGame();
   const proposalsColumnRef = useRef(null);
   const [blocked, setBlocked] = useState(null); // { title, body, button }
   const [submitErrorMsg, setSubmitErrorMsg] = useState("");
@@ -153,7 +155,7 @@ export function DemoUI({
                   result={scoreResult}
                   roleRP={roleRP}
                   roleName={roleName}
-                  placeholder={demoOfferPlaceholder}
+                  placeholder={game?.get("treatment")?.tutorialPlaceholderText}
                   footer={submitButton}
                 />
               );

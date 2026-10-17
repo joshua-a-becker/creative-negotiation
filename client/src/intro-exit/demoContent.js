@@ -19,8 +19,6 @@ export const demoBATNA = "If you do not reach an agreement in this practice, you
 
 export const demoRP = 0;
 
-export const demoOfferPlaceholder = "Write your offer here, e.g.\n$300 for the venue on September 15 next year, ending at 9.";
-
 export const demoFriendlyProblem = "The system can’t quite understand that offer yet. Try stating the venue price, an August or September date, and an ending time from 5 through 11. For example: “$300 for September 15, ending at 9.” You can then add one extra idea.";
 
 // The Venue Manager's scripted replies, pre-scored (proposer = Recruiter).

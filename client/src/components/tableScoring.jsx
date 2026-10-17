@@ -15,8 +15,16 @@
 import React from "react";
 import { batnaThreshold, formatValue } from "./negotiationDisplay";
 
+// scoringMode has no default: a treatment must set it to "table" or
+// "freetext", and anything else is a misconfiguration we fail loudly on.
+export const SCORING_MODES = ["table", "freetext"];
+
 export function isTableMode(treatment) {
-  return treatment?.scoringMode === "table";
+  const mode = treatment?.scoringMode;
+  if (!SCORING_MODES.includes(mode)) {
+    throw new Error(`Treatment factor scoringMode must be "table" or "freetext" (got ${JSON.stringify(mode)})`);
+  }
+  return mode === "table";
 }
 
 // Every issue has an option chosen.

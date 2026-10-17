@@ -132,6 +132,7 @@ export function ReadRoleContent({ profileComponent }) {
               result={scoreResult}
               roleRP={roleRP}
               roleName={roleName}
+              placeholder={game.get("treatment")?.mainPlaceholderText}
               emptyMessage="Try out an offer to see what it would be worth to you. Nothing you type here is shared with the other side."
             />
           )}
