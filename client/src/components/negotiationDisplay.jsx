@@ -2,7 +2,7 @@
 // Negotiation display + value logic for free-text proposals.
 //
 // A proposal is plain text the player types. "Calculate" sends it to the
-// server, which runs server/src/score_offer/score_offer.py and returns the
+// server, which runs score_offer/empirica/score_offer.py and returns the
 // scorer's structured JSON. The pieces of that JSON the UI relies on:
 //
 //   decision            "scorable" | "rejected" | "clarification_needed"

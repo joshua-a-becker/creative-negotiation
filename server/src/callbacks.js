@@ -31,21 +31,22 @@ const SCORER_ENABLED = process.env.SCORER_MOCK !== "1";
 // API before giving up. The client waits a little longer than this.
 const SCORER_TIMEOUT_MS = 90000;
 
-// Where score_offer.py lives. The scorer is NOT part of the Empirica bundle
+// Where score_offer.py lives (score_offer/empirica/score_offer.py). The scorer
+// is NOT part of the Empirica bundle
 // (`empirica bundle` packs only .empirica/, server/dist and client/dist, and
 // `empirica serve` runs this code from a hashed temp dir), so it is uploaded
 // separately to a fixed place: ~/score_offer/ in the home of the user the
 // server runs as (/root/score_offer on the live host, /home/<user>/score_offer
 // locally). SCORER_SCRIPT overrides; the last two entries cover dev mode, where
-// the server runs from server/ and the scorer sits at the repo root.
-const SCORER_HOME_PATH = path.join(os.homedir(), "score_offer", "score_offer.py");
+// the server runs from server/ and score_offer/ sits at the repo root.
+const SCORER_HOME_PATH = path.join(os.homedir(), "score_offer", "empirica", "score_offer.py");
 
 function scorerScriptPath() {
   if (process.env.SCORER_SCRIPT) return process.env.SCORER_SCRIPT;
   const candidates = [
     SCORER_HOME_PATH,
-    path.resolve(process.cwd(), "../score_offer.py"),
-    path.resolve(process.cwd(), "score_offer.py"),
+    path.resolve(process.cwd(), "../score_offer/empirica/score_offer.py"),
+    path.resolve(process.cwd(), "score_offer/empirica/score_offer.py"),
   ];
   return candidates.find((c) => existsSync(c)) || null;
 }
