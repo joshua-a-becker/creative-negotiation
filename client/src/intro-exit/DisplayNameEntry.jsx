@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "../components/Button.jsx";
 import { MediaPermissionGate } from "../components/MediaPermissionGate.jsx";
-import { DailyCallContext } from "../App.jsx";
+import { stopAllTrackedStreams } from "../mediaTracks";
 
 import { usePlayer } from "@empirica/core/player/classic/react";
 
 export function DisplayNameEntry({ next }) {
   const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState("");
-  const { setMediaStream } = useContext(DailyCallContext);
 
   const player = usePlayer();
 
@@ -58,7 +57,11 @@ export function DisplayNameEntry({ next }) {
 
   // Handle permissions granted with device IDs
   const handlePermissionsGranted = (stream, videoDeviceId, audioDeviceId, audioEnabled, videoEnabled) => {
-    setMediaStream(stream);
+    // The gate is only for permission + device selection. Release the camera/mic
+    // right away so nothing is live on this page or in the lobby; VideoChat
+    // re-acquires with the stored device IDs when the negotiation stage mounts it.
+    stream?.getTracks().forEach((track) => track.stop());
+    stopAllTrackedStreams();
 
     // Store device IDs in player data for later use
     if (videoDeviceId) {

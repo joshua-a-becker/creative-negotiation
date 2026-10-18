@@ -102,6 +102,16 @@ export default function App() {
   const [callJoinData, setCallJoinData] = useState(null);
   const [hasJoinedCall, setHasJoinedCall] = useState(false);
   const participantTracksRef = useRef({});
+  // Timer handles for the participant polling loops started in handleJoined.
+  // They close over their call object, so they must be cleared whenever that
+  // object is left/destroyed (teardown), or they keep polling a dead call.
+  const pollTimersRef = useRef([]);
+  const clearPollTimers = () => {
+    pollTimersRef.current.forEach(({ kind, id }) =>
+      kind === "timeout" ? clearTimeout(id) : clearInterval(id)
+    );
+    pollTimersRef.current = [];
+  };
 
   const [callState, setCallState] = useState({
     remoteStreams: {},
@@ -193,9 +203,9 @@ export default function App() {
 
 
   // Daily.co call initialization and joining
-  // IMPORTANT: This effect joins the call ONCE and only once per App instance
-  // hasJoinedCall is never reset to false - the call persists across VideoChat mount/unmount
-  // This ensures the call stays connected as users navigate between stages
+  // IMPORTANT: This effect joins the call once per teardown cycle.
+  // hasJoinedCall is only reset by teardownCall (outside the negotiation stage);
+  // within the negotiation the call persists across VideoChat mount/unmount.
   useEffect(() => {
     console.log("UPDATED-2026-05-29")
     // Wait for all required data before joining
@@ -412,14 +422,15 @@ export default function App() {
             }
           });
         }, 500); // Poll every 500ms
+        pollTimersRef.current.push({ kind: "interval", id: fastPollInterval });
 
         // After 10 seconds, switch to slow polling to catch rejoiners
-        setTimeout(() => {
+        const slowPollSwitch = setTimeout(() => {
           clearInterval(fastPollInterval);
           // console.log("Switching to slow polling for rejoiners");
 
           // Slow polling continues indefinitely to catch people who rejoin
-          setInterval(() => {
+          const slowPollInterval = setInterval(() => {
             const currentParticipants = callObject.participants();
             const currentRemoteIds = Object.keys(currentParticipants).filter(id => id !== "local");
 
@@ -544,7 +555,9 @@ export default function App() {
               };
             });
           }, 2000); // Poll every 2 seconds (slow but catches rejoiners)
+          pollTimersRef.current.push({ kind: "interval", id: slowPollInterval });
         }, 10000);
+        pollTimersRef.current.push({ kind: "timeout", id: slowPollSwitch });
 
         if (local) {
           const displayName = local.userData?.displayName || "You";
@@ -945,13 +958,15 @@ export default function App() {
     }
   }, [setCallState]);
 
-  // Fully release the Daily call AND the local getUserMedia capture. Used by the
-  // prep stages (Read Negotiation Role / Ready To Negotiate), which show no video:
+  // Fully release the Daily call AND the local getUserMedia capture. Used by
+  // Stage everywhere outside active negotiation (prep stages, post-submit wait,
+  // and on unmount when the game ends and the exit steps render):
   // this stops the cloud recording/transcription and — by stopping the local
   // tracks — extinguishes the browser camera/mic indicator. VideoChat re-acquires
   // media and rejoins on its own when the negotiation stage mounts it.
   // Idempotent: safe to call when already torn down.
   const teardownCall = useCallback(async () => {
+    clearPollTimers();
     const callObject = callObjectRef.current;
     if (callObject) {
       // Guard each step independently: stopRecording/stopTranscription/leave are

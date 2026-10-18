@@ -33,16 +33,20 @@ export function Stage({ profileComponent }) {
     }
   }, [game.get("forceQuit"), stageName, player]);
 
-  // The prep stages show no video, so fully release the Daily call and the local
-  // camera/mic here: the recording indicator goes dark and nothing is recorded.
+  // Video is only used while actively negotiating. Everywhere else (prep stages,
+  // the post-submit wait screen) fully release the Daily call and the local
+  // camera/mic: the recording indicator goes dark and nothing is recorded.
   // VideoChat re-acquires media and rejoins the game room when the negotiation
-  // stage mounts it. (This effect must run before any early return below to keep
-  // hook order stable.)
-  const isPrepStage =
-    stageName === "Read Negotiation Role" || stageName === "Ready To Negotiate";
+  // stage mounts it. (These effects must run before any early return below to
+  // keep hook order stable.)
+  const isNegotiating =
+    stageName === "Time To Negotiate" && !player.stage.get("submit");
   useEffect(() => {
-    if (isPrepStage) teardownCall();
-  }, [isPrepStage, teardownCall]);
+    if (!isNegotiating) teardownCall();
+  }, [isNegotiating, teardownCall]);
+
+  // Game over → Stage unmounts → exit steps render: release everything.
+  useEffect(() => () => { teardownCall(); }, [teardownCall]);
 
   // Heartbeat: append a timestamp every 60 seconds
   useEffect(() => {
