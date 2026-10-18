@@ -50,7 +50,16 @@ def private_payoff_rows(scenario, role):
                 _, points = score_pair(name, str(value), role, {}, scenario)
                 shown = f'{points:+.2f}'.rstrip('0').rstrip('.')
                 values.append(f'{label}: {shown}')
-            rows.append([name, f'Continuous · {unit}', '; '.join(values)])
+            proposal_domain = issue.get('proposal_domain')
+            if isinstance(proposal_domain, dict) and proposal_domain.get('max') is None:
+                kind_label = f'Open amount · {unit}'
+                value_label = 'Scoring anchors — ' + '; '.join(values) + '. Amounts outside these anchors continue at the same rate.'
+            else:
+                kind_label = f'Continuous · {unit}'
+                value_label = '; '.join(values)
+                if isinstance(proposal_domain, dict):
+                    value_label += f". Scoring anchors, not proposal limits. You may propose {proposal_domain.get('min')}–{proposal_domain.get('max')} {unit}; points continue at the same rate."
+            rows.append([name, kind_label, value_label])
         else:
             rows.append([name, 'Choice-based', '; '.join(f"{opt['label']}: {opt[role]:+g}" for opt in issue['options'])])
     return rows

@@ -23,6 +23,18 @@ def escalation_reasons(text, extraction, evaluated):
         reasons.append('catalog_boundary')
     if len(extraction.get('pairs', [])) >= 8 or text.count(';') >= 3:
         reasons.append('dense_package_completeness')
+    # A short extra request can otherwise disappear while the three required
+    # choices make the offer look complete. Ask the independent reviewer to
+    # inspect uncovered coordinated clauses; do not assign them any points.
+    def normalized(value):
+        return re.sub(r'[^a-z0-9]+',' ',str(value).lower()).strip()
+    sources=[normalized(p.get('source_text','')) for p in extraction.get('pairs',[]) if isinstance(p,dict)]
+    sources += [normalized(s) for s in [*extraction.get('novel_terms',[]),*extraction.get('unsupported_terms',[])]]
+    for clause in re.split(r'\s+(?:and|plus|together\s+with)\s+',text,flags=re.I)[1:]:
+        value=normalized(clause)
+        if re.match(r'^(?:an?|the\s+right\s+to|access\s+to|free)\s+',value) and not any(value in source for source in sources if source):
+            reasons.append('unaccounted_offer_clause')
+            break
     names = set(evaluated.get('valid_pairs', {}))
     for name, pattern in {
         'Probation Length': r'\b(?:probation|trial period)\b',

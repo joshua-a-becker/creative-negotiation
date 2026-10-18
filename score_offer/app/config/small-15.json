@@ -14,9 +14,10 @@
     "required_sample_count": 16384,
     "all_issue_sample_count": 32768,
     "optional_issue_inclusion_probability": 0.5,
-    "method": "Deterministic quasi-random sampling over the configured continuous ranges and optional-issue states.",
-    "explanation": "Each sampled package is scored for both roles. The jointly acceptable share is the proportion with a total strictly above zero for each party. Zero is not acceptable. This is an approximation, not an enumeration of infinitely many continuous offers.",
-    "acceptance_comparison": ">"
+    "method": "Frozen reference sampling in payoff space. Salary and personal budget are sampled uniformly between their displayed scoring anchors, which are reference points rather than proposal limits. Other issues use their configured choices or physical ranges.",
+    "explanation": "ZOPA share is the proportion of packages in the frozen reference distribution with a total strictly above zero for both parties. Because monetary proposals have no upper ceiling, this is a reference-distribution share, not a fraction of every possible dollar amount.",
+    "acceptance_comparison": ">",
+    "monetary_transfer_note": "Salary and personal-budget payoffs are exact opposites across roles and are reduced to one distributive payoff variable for exact ZOPA and Pareto calculations."
   },
   "roles": {
     "Candidate": {
@@ -25,7 +26,7 @@
         "Remote Working Days"
       ],
       "summary": "Negotiate the terms of a sales role. Every complete offer must include salary, a personal work-expense budget, and a starting date. Use your private role information to decide what else matters to you.",
-      "full_text": "CANDIDATE ROLE INFORMATION\n\nYou are an ambitious job Candidate negotiating a sales role with a young company. You care about income, but money isn't all that matters in life. You want room to build a career, protect time with your family, and avoid getting stuck in a role where your work is visible but you are not developing professionally.\n\nYour objective is to reach an agreement with the highest total score you can, while recognizing that the Recruiter has priorities of their own that may conflict with yours. Every complete offer must include three terms: salary, a personal budget for work expenses such as client travel, meals, and lodging, and a starting date. The budget is an annual allowance for approved work expenses, not take-home pay. It lets you serve clients without paying those costs yourself; unused money stays with the company.\n\nYou prefer a higher salary and budget and an earlier start. Starting promptly would help restore your income and career momentum, while a long delay would be substantially more disruptive. Annual salary may range from $35,000 to $65,000: $35,000 gives you −2 points, $50,000 gives you 0, and $65,000 gives you +2. The personal budget may range from $5,000 to $15,000: $5,000 gives you −2, $10,000 gives you 0, and $15,000 gives you +2. Starting dates may range from 1 May to 30 September: 1 May gives you +1, around 8 June gives you 0, and 30 September gives you −3. The platform calculates intermediate scores automatically. For example, a $7,000 budget is worth about −1.2 points to you. You do not need to calculate this yourself.\n\nThese headline contract terms are easy to put numbers on. The interview also left you thinking about what the job would actually be like and what other terms you might ask for given what matters to you.\n\nBackground Information\n\nOn the way home, you think about the company's usual 30 vacation days per year and 3 remote-working days per week. Those arrangements seem reasonable. Each is worth 0 points to you. Still, more flexibility would mean more time with your family and more room for interests and professional development outside work, while less flexibility would work against those interests. For vacation, 10 days per year are worth −1 point to you and 50 days are worth +1. For remote work, 1 day per week is worth −1 and all 5 working days are worth +1. The two terms are scored separately, with proportional points for values in between.\n\nYou also remember the Recruiter's stories about how people grow in the company. One new hire attended an external professional training program; another was paired with an experienced mentor. Someone else built relationships with senior colleagues after volunteering at a recruitment fair. Those examples appealed to you because they offered concrete ways to learn and build relationships rather than vague promises of “growth.”\n\nOther stories were less appealing. The Recruiter joked that sociable employees often end up organizing team events. The company regularly shares strong client stories on social media. Employees close to those accounts may be asked to help shape the posts, and confident employees sometimes present at conferences. You enjoy people, but you do not want every spare hour turned into company visibility. A recruitment fair might expand your network; recurring publicity work might simply expand your workload.\n\nThat evening, your spouse asked whether the company would support the professional association that has helped you and what would happen if you eventually wanted to leave. Sponsored membership could help keep your skills and outside relationships alive. The question about leaving brought you back to the non-compete clause you had raised. You want to show commitment without unnecessarily limiting your future.\n\nThe interview contained small details and examples rather than a neat menu of contract features. Some may simply be background. Others could become useful terms if you connect them to what matters to you.\n\nINSTRUCTIONS\n\nNegotiate with the Recruiter by making offers in plain, ordinary language, as if you were writing them a short message. Every complete offer must include salary, a personal work-expense budget, and a starting date. You decide what else is worth discussing and when to raise it.\n\nFor example: “I propose a salary of [amount], a personal work-expense budget of [amount], and a starting date of [date], together with any other terms I choose to raise.” Use your own values and wording.\n\nYour score is private and translates directly into the bonus payment you can earn from this task. You may propose an offer worth zero or less to you, but you can accept only an offer worth more than zero to you. An agreement requires both parties to accept the same offer, with a positive total score for each. Individual terms may still be worth zero or less. Without a deal, you will continue your job search; you do not have another offer in hand. This fallback is worth 0 points.\n\nThe researchers set the scoring rules in advance, and the platform applies them automatically; you do not assign points yourself. Each additional supported feature is worth between −1 and +1 points to you, based on the interests in your role. Its value to the Recruiter may differ. Separate commitments are scored separately, even when offered as one package; rewording the same term does not earn extra points. You are limited to job features described or suggested in these materials. Features outside this set are not negotiable and do not affect your score.",
+      "full_text": "You are an ambitious job Candidate negotiating a sales role with a young company. You care about income, but money isn't all that matters in life. You want room to build a career, protect time with your family, and avoid getting stuck in a role where your work is visible but you are not developing professionally.\n\n\nYour objective is to reach an agreement with the highest total score you can, while recognizing that the Recruiter has priorities of their own that may conflict with yours.\n\n\nYou prefer a higher salary and budget and an earlier start. Starting promptly would help restore your income and career momentum, while a long delay would be substantially more disruptive.\n\n\nSalary and personal work-expense budget may be any non-negative amount. The figures below are scoring reference points, not limits on what you may propose.\n\n\n\nAnnual salary: $35,000 gives you −2 points, \n$50,000 gives you 0, and $65,000 gives you +2.\n\n\nStarting date: January 1 gives you +1 point, March 1 gives you 0, May 1 gives you −1, July 1 gives you −2, and dates in September give you −3. Dates between these examples receive proportional points. A start after September means the deal cannot go ahead.\n\n\nThe personal budget: $5,000 gives you −2, \n$10,000 gives you 0, and $15,000 gives you +2.\n\n\n\nSalary and budget amounts between these reference points receive intermediate scores. Amounts outside them continue to gain or lose points at the same rate.\n\n\nFor example, a $7,000 budget is worth about −1.2 points to you. You do not need to calculate this yourself.\n\n\nThese headline contract terms are easy to put numbers on. However, the interview also left you thinking about what the job would actually be like and what other terms you might ask for given what matters to you.\n\n\nBackground Information\n\n\nOn the way home, you think about the company's usual 30 vacation days per year and 3 remote-working days per week. Those arrangements seem reasonable. Each is worth 0 points to you.\n\n\nStill, more flexibility would mean more time with your family and more room for interests and professional development outside work, while less flexibility would work against those interests.\n\n\n\nFor vacation, 10 days per year are worth −1 point to you and 50 days are worth +1.\n\n\nFor remote work, 1 day per week is worth −1 and all 5 working days are worth +1.\n\n\n\nThe two features are scored separately. Values between or beyond these examples continue at the same rate; vacation cannot exceed 365 days per year, and remote work cannot exceed the five working days per week.\n\n\nYou also remember the Recruiter's stories about how people grow in the company.\n\n\n\nOne new hire attended an external professional training program; another was paired with an experienced mentor.\n\n\nSomeone else built relationships with senior colleagues after volunteering at a recruitment fair.\n\n\n\nThose examples appealed to you because they offered concrete ways to learn and build relationships rather than vague promises of “growth.”\n\n\nOther stories were less appealing.\n\n\n\nThe Recruiter joked that sociable employees often end up organizing team events.\n\n\nThe company regularly shares strong client stories on social media. Employees close to those accounts may be asked to help shape the posts, and confident employees sometimes present at conferences.\n\n\n\n… You enjoy people, but you do not want every spare hour turned into company visibility. A recruitment fair might expand your network; recurring publicity work might simply expand your workload.\n\n\nThat evening, your spouse asked whether the company would support the professional association that has helped you and what would happen if you eventually wanted to leave.\n\n\n\nSponsored membership could help keep your skills and outside relationships alive.\n\n\nThe question about leaving brought you back to the non-compete clause you had raised.\n\n\nYou want to show commitment without unnecessarily limiting your future.\n\n\n\nThe interview contained small details and examples rather than a neat menu of contract features. Some may simply be background. Others could become useful terms if you connect them to what matters to you.\n\n\nYour score is private and translates directly into the bonus payment you can earn from this task.\n\n\nWithout a deal, you will continue your job search; you do not have another offer in hand. This fallback is worth 0 points.",
       "full_blocks": [
         {
           "type": "heading",
@@ -130,7 +131,7 @@
           "type": "paragraph",
           "runs": [
             {
-              "text": "You prefer a higher salary and budget and an earlier start. Starting promptly would help restore your income and career momentum, while a long delay would be substantially more disruptive. Annual salary may range from $35,000 to $65,000: $35,000 gives you −2 points, $50,000 gives you 0, and $65,000 gives you +2. The personal budget may range from $5,000 to $15,000: $5,000 gives you −2, $10,000 gives you 0, and $15,000 gives you +2. Starting dates may range from 1 May to 30 September: 1 May gives you +1, around 8 June gives you 0, and 30 September gives you −3. The platform calculates intermediate scores automatically. For example, a $7,000 budget is worth about −1.2 points to you. You do not need to calculate this yourself.",
+              "text": "You prefer a higher salary and budget and an earlier start. Starting promptly would help restore your income and career momentum, while a long delay would be substantially more disruptive. Salary and personal work-expense budget may be any non-negative amount. The figures below are scoring reference points, not limits on what you may propose. Annual salary: $35,000 gives you −2 points, $50,000 gives you 0, and $65,000 gives you +2. Starting date: January 1 gives you +1 point, March 1 gives you 0, May 1 gives you −1, July 1 gives you −2, and dates in September give you −3. Dates between these examples receive proportional points. A start after September means the deal cannot go ahead. The personal budget: $5,000 gives you −2, $10,000 gives you 0, and $15,000 gives you +2. Salary and budget amounts between these reference points receive intermediate scores. Amounts outside them continue to gain or lose points at the same rate. The platform calculates scores automatically. For example, a $7,000 budget is worth about −1.2 points to you. You do not need to calculate this yourself.",
               "bold": false,
               "italic": false,
               "underline": false
@@ -193,7 +194,7 @@
               "underline": false
             },
             {
-              "text": "For vacation, 10 days per year are worth −1 point to you and 50 days are worth +1. For remote work, 1 day per week is worth −1 and all 5 working days are worth +1. The two terms are scored separately, with proportional points for values in between.",
+              "text": "For vacation, 10 days per year are worth −1 point to you and 50 days are worth +1. For remote work, 1 day per week is worth −1 and all 5 working days are worth +1. The two features are scored separately. Values between or beyond these examples continue at the same rate; vacation cannot exceed 365 days per year, and remote work cannot exceed the five working days per week.",
               "bold": false,
               "italic": false,
               "underline": false
@@ -365,7 +366,207 @@
             }
           ]
         }
-      ]
+      ],
+      "RP": 0,
+      "BATNA": "Without an agreement you receive 0 points. You may accept only an offer worth more than 0 to you.",
+      "determinatescoretable": {
+        "Salary": [
+          {
+            "option": "$35,000",
+            "score": -2.0
+          },
+          {
+            "option": "$40,000",
+            "score": -1.3333333333333335
+          },
+          {
+            "option": "$45,000",
+            "score": -0.6666666666666667
+          },
+          {
+            "option": "$50,000",
+            "score": 0.0
+          },
+          {
+            "option": "$55,000",
+            "score": 0.6666666666666666
+          },
+          {
+            "option": "$60,000",
+            "score": 1.3333333333333333
+          },
+          {
+            "option": "$65,000",
+            "score": 2.0
+          }
+        ],
+        "Personal Budget": [
+          {
+            "option": "$5,000",
+            "score": -2.0
+          },
+          {
+            "option": "$7,500",
+            "score": -1.0
+          },
+          {
+            "option": "$10,000",
+            "score": 0.0
+          },
+          {
+            "option": "$12,500",
+            "score": 1.0
+          },
+          {
+            "option": "$15,000",
+            "score": 2.0
+          }
+        ],
+        "Starting Date": [
+          {
+            "option": "1 January",
+            "score": 1.0
+          },
+          {
+            "option": "1 March",
+            "score": 0.0
+          },
+          {
+            "option": "1 May",
+            "score": -1.0
+          },
+          {
+            "option": "1 July",
+            "score": -2.0
+          },
+          {
+            "option": "1 September",
+            "score": -3.0
+          },
+          {
+            "option": "30 September",
+            "score": -3.0
+          },
+          {
+            "option": "1 October",
+            "score": -1000.0
+          },
+          {
+            "option": "31 December",
+            "score": -1000.0
+          }
+        ]
+      },
+      "continuous_scoring": {
+        "Salary": {
+          "value_type": "currency",
+          "unit": "USD per year",
+          "domain": {
+            "min": 0,
+            "max": null
+          },
+          "reference_min": 35000,
+          "reference_max": 65000,
+          "interpolation": "piecewise_linear",
+          "extrapolation": "linear",
+          "knots": [
+            {
+              "value": 35000,
+              "score": -2
+            },
+            {
+              "value": 50000,
+              "score": 0
+            },
+            {
+              "value": 65000,
+              "score": 2
+            }
+          ],
+          "examples_are_not_exhaustive": true,
+          "step_is_display_hint": true,
+          "input_type": "number"
+        },
+        "Personal Budget": {
+          "value_type": "currency",
+          "unit": "USD per year",
+          "domain": {
+            "min": 0,
+            "max": null
+          },
+          "reference_min": 5000,
+          "reference_max": 15000,
+          "interpolation": "piecewise_linear",
+          "extrapolation": "linear",
+          "knots": [
+            {
+              "value": 5000,
+              "score": -2
+            },
+            {
+              "value": 10000,
+              "score": 0
+            },
+            {
+              "value": 15000,
+              "score": 2
+            }
+          ],
+          "examples_are_not_exhaustive": true,
+          "step_is_display_hint": true,
+          "input_type": "number"
+        },
+        "Starting Date": {
+          "value_type": "date",
+          "unit": "calendar date",
+          "domain": {
+            "min": "2026-01-01",
+            "max": "2026-12-31"
+          },
+          "reference_min": "2026-01-01",
+          "reference_max": "2026-12-31",
+          "interpolation": "piecewise_linear",
+          "extrapolation": "reject",
+          "knots": [
+            {
+              "value": "2026-01-01",
+              "score": 1
+            },
+            {
+              "value": "2026-03-01",
+              "score": 0
+            },
+            {
+              "value": "2026-05-01",
+              "score": -1
+            },
+            {
+              "value": "2026-07-01",
+              "score": -2
+            },
+            {
+              "value": "2026-09-01",
+              "score": -3
+            },
+            {
+              "value": "2026-09-30",
+              "score": -3
+            },
+            {
+              "value": "2026-10-01",
+              "score": -1000
+            },
+            {
+              "value": "2026-12-31",
+              "score": -1000
+            }
+          ],
+          "examples_are_not_exhaustive": true,
+          "step_is_display_hint": true,
+          "input_type": "date",
+          "assume_year": 2026
+        }
+      }
     },
     "Recruiter": {
       "private_issues": [
@@ -373,7 +574,7 @@
         "Contract Length"
       ],
       "summary": "Negotiate the terms of a sales hire. Every complete offer must include salary, a personal work-expense budget, and a starting date. Use your private role information to decide what else matters to the company.",
-      "full_text": "RECRUITER ROLE INFORMATION\n\nYou are an ambitious Recruiter at a young company negotiating with a promising sales candidate. You care about making a strong hire, but filling the role isn't all that matters. You want to control costs, get the new hire productive quickly, keep the team working well, and avoid commitments that leave the company exposed if the hire does not work out.\n\nYour objective is to reach an agreement with the highest total score you can, while recognizing that the Candidate has priorities of their own that may conflict with yours. Every complete offer must include three terms: salary, a personal budget for work expenses such as client travel, meals, and lodging, and a starting date. The budget is an annual allowance for approved work expenses, not take-home pay. It gives the new hire resources to serve clients; unused money stays with the company.\n\nYou prefer a lower salary and budget and an earlier start. Starting promptly would help fill the vacancy, while a long delay would leave the team covering the role and be substantially more costly. Annual salary may range from $35,000 to $65,000: $35,000 gives you +2 points, $50,000 gives you 0, and $65,000 gives you −2. The personal budget may range from $5,000 to $15,000: $5,000 gives you +2, $10,000 gives you 0, and $15,000 gives you −2. Starting dates may range from 1 May to 30 September: 1 May gives you +1, around 8 June gives you 0, and 30 September gives you −3. The platform calculates intermediate scores automatically. For example, a $7,000 budget is worth about +1.2 points to you. You do not need to calculate this yourself.\n\nThese headline contract terms are easy to put numbers on. The interview also left you thinking about what hiring this person would actually involve, what the Candidate might ask for, and what other terms could benefit the company.\n\nBackground Information\n\nLooking over your notes, you think about the company's usual 3-month probation period and 3-year contract. Those arrangements seem sensible. Each is worth 0 points to you. Still, the sales manager's description of the Candidate as “bright but raw” makes you cautious about committing too much before seeing how they perform. A longer probation gives the company more protection. For probation, no probation is worth −1 point to you and 6 months are worth +1. Contract length works in the other direction: 2 years are worth +1 point to you and 4 years are worth −1. The two terms are scored separately, with proportional points for values in between.\n\nYou also remember the Candidate's interest when you described the external professional training program and experienced employees who sometimes mentor new hires. Good development can turn a risky appointment into a strong performer and reflect well on your ability to spot talent. The Candidate was also curious about professional associations and recruitment fairs. Association sponsorship would cost the company money; a recruitment-fair role could help attract future candidates.\n\nOther parts of the conversation suggested different possibilities. The Candidate was personable and might be good at organizing occasional team events. The company regularly shares strong client stories on social media. Because the Candidate would be close to those accounts, they might be a natural person to help shape the posts. Conference presentations sounded less useful. Your manager sees them as costly distractions, and the Candidate did not seem eager to spend evenings preparing slides.\n\nThe Candidate's question about waiving the standard non-compete also stayed with you. You understand why future flexibility matters to them. But if they later leave for a competitor with knowledge of your clients, colleagues may ask why you gave up that protection. You want the new hire to develop and succeed without leaving the company unnecessarily exposed.\n\nThe interview contained small details and examples rather than a neat menu of contract features. Some may simply be background. Others could become useful terms if you connect them to what matters to the company.\n\nINSTRUCTIONS\n\nNegotiate with the Candidate by making offers in plain, ordinary language, as if you were writing them a short message. Every complete offer must include salary, a personal work-expense budget, and a starting date. You decide what else is worth discussing and when to raise it.\n\nFor example: “I propose a salary of [amount], a personal work-expense budget of [amount], and a starting date of [date], together with any other terms I choose to raise.” Use your own values and wording.\n\nYour score is private and translates directly into the bonus payment you can earn from this task. You may propose an offer worth zero or less to you, but you can accept only an offer worth more than zero to you. An agreement requires both parties to accept the same offer, with a positive total score for each. Individual terms may still be worth zero or less. Without a deal, you will keep recruiting while the existing team covers the vacancy. This fallback is worth 0 points.\n\nThe researchers set the scoring rules in advance, and the platform applies them automatically; you do not assign points yourself. Each additional supported feature is worth between −1 and +1 points to you, based on the interests in your role. Its value to the Candidate may differ. Separate commitments are scored separately, even when offered as one package; rewording the same term does not earn extra points. You are limited to job features described or suggested in these materials. Features outside this set are not negotiable and do not affect your score.",
+      "full_text": "You are an ambitious Recruiter at a young company negotiating with a promising sales candidate. You care about making a strong hire, but filling the role isn't all that matters. You want to control costs, get the new hire productive quickly, keep the team working well, and avoid commitments that leave the company exposed if the hire does not work out.\n\n\nYour objective is to reach an agreement with the highest total score you can, while recognizing that the Candidate has priorities of their own that may conflict with yours.\n\n\nYou prefer a lower salary and budget and an earlier start. Starting promptly would help fill the vacancy, while a long delay would leave the team covering the role and be substantially more costly.\n\n\nSalary and personal work-expense budget may be any non-negative amount. The figures below are scoring reference points, not limits on what you may propose.\n\n\n\nAnnual salary: $35,000 gives you +2 points, \n$50,000 gives you 0, and $65,000 gives you −2.\n\n\nStarting date: January 1 gives you +1 point, March 1 gives you 0, May 1 gives you −1, July 1 gives you −2, and dates in September give you −3. Dates between these examples receive proportional points. A start after September means the deal cannot go ahead.\n\n\nThe personal budget: $5,000 gives you +2, \n$10,000 gives you 0, and $15,000 gives you −2.\n\n\n\nSalary and budget amounts between these reference points receive intermediate scores. Amounts outside them continue to gain or lose points at the same rate.\n\n\nFor example, a $7,000 budget is worth about +1.2 points to you. You do not need to calculate this yourself.\n\n\nThese headline contract terms are easy to put numbers on. However, the interview also left you thinking about what hiring this person would actually involve, what the Candidate might ask for, and what other terms could benefit the company.\n\n\nBackground Information\n\n\nLooking over your notes, you think about the company's usual 3-month probation period and 3-year contract. Those arrangements seem sensible. Each is worth 0 points to you.\n\n\nStill, the sales manager's description of the Candidate as “bright but raw” makes you cautious about committing too much before seeing how they perform.\n\n\n\nA longer probation gives the company more protection. For probation, no probation is worth −1 point to you and 6 months are worth +1.\n\n\nContract length works in the other direction: 2 years are worth +1 point to you and 4 years are worth −1.\n\n\n\nThe two terms are scored separately, with proportional points for values in between.\n\n\nYou also remember the Candidate's interest when you described the external professional training program and experienced employees who sometimes mentor new hires. Good development can turn a risky appointment into a strong performer and reflect well on your ability to spot talent.\n\n\nThe Candidate was also curious about professional associations and recruitment fairs. Association sponsorship would cost the company money; a recruitment-fair role could help attract future candidates.\n\n\nOther parts of the conversation suggested different possibilities.\n\n\n\nThe Candidate was personable and might be good at organizing occasional team events.\n\n\nThe company regularly shares strong client stories on social media. Because the Candidate would be close to those accounts, they might be a natural person to help shape the posts.\n\n\n… Conference presentations sounded less useful. Your manager sees them as costly distractions, and the Candidate did not seem eager to spend evenings preparing slides.\n\n\n\nThe Candidate's question about waiving the standard non-compete also stayed with you.\n\n\n\nYou understand why future flexibility matters to them.\n\n\nBut if they later leave for a competitor with knowledge of your clients, colleagues may ask why you gave up that protection.\n\n\nYou want the new hire to develop and succeed without leaving the company unnecessarily exposed.\n\n\n\nThe interview contained small details and examples rather than a neat menu of contract features. Some may simply be background. Others could become useful terms if you connect them to what matters to the company.\n\n\nYour score is private and translates directly into the bonus payment you can earn from this task.\n\n\nWithout a deal, you will keep recruiting while the existing team covers the vacancy. This fallback is worth 0 points.",
       "full_blocks": [
         {
           "type": "heading",
@@ -478,7 +679,7 @@
           "type": "paragraph",
           "runs": [
             {
-              "text": "You prefer a lower salary and budget and an earlier start. Starting promptly would help fill the vacancy, while a long delay would leave the team covering the role and be substantially more costly. Annual salary may range from $35,000 to $65,000: $35,000 gives you +2 points, $50,000 gives you 0, and $65,000 gives you −2. The personal budget may range from $5,000 to $15,000: $5,000 gives you +2, $10,000 gives you 0, and $15,000 gives you −2. Starting dates may range from 1 May to 30 September: 1 May gives you +1, around 8 June gives you 0, and 30 September gives you −3. The platform calculates intermediate scores automatically. For example, a $7,000 budget is worth about +1.2 points to you. You do not need to calculate this yourself.",
+              "text": "You prefer a lower salary and budget and an earlier start. Starting promptly would help fill the vacancy, while a long delay would leave the team covering the role and be substantially more costly. Salary and personal work-expense budget may be any non-negative amount. The figures below are scoring reference points, not limits on what you may propose. Annual salary: $35,000 gives you +2 points, $50,000 gives you 0, and $65,000 gives you −2. Starting date: January 1 gives you +1 point, March 1 gives you 0, May 1 gives you −1, July 1 gives you −2, and dates in September give you −3. Dates between these examples receive proportional points. A start after September means the deal cannot go ahead. The personal budget: $5,000 gives you +2, $10,000 gives you 0, and $15,000 gives you −2. Salary and budget amounts between these reference points receive intermediate scores. Amounts outside them continue to gain or lose points at the same rate. The platform calculates scores automatically. For example, a $7,000 budget is worth about +1.2 points to you. You do not need to calculate this yourself.",
               "bold": false,
               "italic": false,
               "underline": false
@@ -761,7 +962,207 @@
             }
           ]
         }
-      ]
+      ],
+      "RP": 0,
+      "BATNA": "Without an agreement you receive 0 points. You may accept only an offer worth more than 0 to you.",
+      "determinatescoretable": {
+        "Salary": [
+          {
+            "option": "$35,000",
+            "score": 2.0
+          },
+          {
+            "option": "$40,000",
+            "score": 1.3333333333333335
+          },
+          {
+            "option": "$45,000",
+            "score": 0.6666666666666667
+          },
+          {
+            "option": "$50,000",
+            "score": 0.0
+          },
+          {
+            "option": "$55,000",
+            "score": -0.6666666666666666
+          },
+          {
+            "option": "$60,000",
+            "score": -1.3333333333333333
+          },
+          {
+            "option": "$65,000",
+            "score": -2.0
+          }
+        ],
+        "Personal Budget": [
+          {
+            "option": "$5,000",
+            "score": 2.0
+          },
+          {
+            "option": "$7,500",
+            "score": 1.0
+          },
+          {
+            "option": "$10,000",
+            "score": 0.0
+          },
+          {
+            "option": "$12,500",
+            "score": -1.0
+          },
+          {
+            "option": "$15,000",
+            "score": -2.0
+          }
+        ],
+        "Starting Date": [
+          {
+            "option": "1 January",
+            "score": 1.0
+          },
+          {
+            "option": "1 March",
+            "score": 0.0
+          },
+          {
+            "option": "1 May",
+            "score": -1.0
+          },
+          {
+            "option": "1 July",
+            "score": -2.0
+          },
+          {
+            "option": "1 September",
+            "score": -3.0
+          },
+          {
+            "option": "30 September",
+            "score": -3.0
+          },
+          {
+            "option": "1 October",
+            "score": -1000.0
+          },
+          {
+            "option": "31 December",
+            "score": -1000.0
+          }
+        ]
+      },
+      "continuous_scoring": {
+        "Salary": {
+          "value_type": "currency",
+          "unit": "USD per year",
+          "domain": {
+            "min": 0,
+            "max": null
+          },
+          "reference_min": 35000,
+          "reference_max": 65000,
+          "interpolation": "piecewise_linear",
+          "extrapolation": "linear",
+          "knots": [
+            {
+              "value": 35000,
+              "score": 2
+            },
+            {
+              "value": 50000,
+              "score": 0
+            },
+            {
+              "value": 65000,
+              "score": -2
+            }
+          ],
+          "examples_are_not_exhaustive": true,
+          "step_is_display_hint": true,
+          "input_type": "number"
+        },
+        "Personal Budget": {
+          "value_type": "currency",
+          "unit": "USD per year",
+          "domain": {
+            "min": 0,
+            "max": null
+          },
+          "reference_min": 5000,
+          "reference_max": 15000,
+          "interpolation": "piecewise_linear",
+          "extrapolation": "linear",
+          "knots": [
+            {
+              "value": 5000,
+              "score": 2
+            },
+            {
+              "value": 10000,
+              "score": 0
+            },
+            {
+              "value": 15000,
+              "score": -2
+            }
+          ],
+          "examples_are_not_exhaustive": true,
+          "step_is_display_hint": true,
+          "input_type": "number"
+        },
+        "Starting Date": {
+          "value_type": "date",
+          "unit": "calendar date",
+          "domain": {
+            "min": "2026-01-01",
+            "max": "2026-12-31"
+          },
+          "reference_min": "2026-01-01",
+          "reference_max": "2026-12-31",
+          "interpolation": "piecewise_linear",
+          "extrapolation": "reject",
+          "knots": [
+            {
+              "value": "2026-01-01",
+              "score": 1
+            },
+            {
+              "value": "2026-03-01",
+              "score": 0
+            },
+            {
+              "value": "2026-05-01",
+              "score": -1
+            },
+            {
+              "value": "2026-07-01",
+              "score": -2
+            },
+            {
+              "value": "2026-09-01",
+              "score": -3
+            },
+            {
+              "value": "2026-09-30",
+              "score": -3
+            },
+            {
+              "value": "2026-10-01",
+              "score": -1000
+            },
+            {
+              "value": "2026-12-31",
+              "score": -1000
+            }
+          ],
+          "examples_are_not_exhaustive": true,
+          "step_is_display_hint": true,
+          "input_type": "date",
+          "assume_year": 2026
+        }
+      }
     }
   },
   "issues": [
@@ -825,7 +1226,13 @@
           }
         ]
       },
-      "payoff_justification": "The narrower range answers participant realism feedback while preserving the same conflict: higher salary helps the Candidate and costs the Recruiter. The endpoints remain −2 and +2, with $50,000 worth 0 to both."
+      "payoff_justification": "Higher salary benefits the Candidate and costs the Recruiter. The three displayed amounts are scoring reference points, not proposal limits; non-negative amounts outside them continue at the same linear payoff rate.",
+      "proposal_domain": {
+        "min": 0,
+        "max": null
+      },
+      "payoff_extrapolation": "linear",
+      "bounds_meaning": "scoring_reference_anchors"
     },
     {
       "id": "personal_budget",
@@ -885,7 +1292,13 @@
           }
         ]
       },
-      "payoff_justification": "The narrower annual expense-budget range is easier to view as plausible for one sales role. It preserves the same conflict and −2 to +2 payoff scale, with $10,000 worth 0 to both."
+      "payoff_justification": "A larger annual work-expense budget benefits the Candidate and costs the Recruiter. The three displayed amounts are scoring reference points, not proposal limits; non-negative amounts outside them continue at the same linear payoff rate.",
+      "proposal_domain": {
+        "min": 0,
+        "max": null
+      },
+      "payoff_extrapolation": "linear",
+      "bounds_meaning": "scoring_reference_anchors"
     },
     {
       "id": "starting_date",
@@ -895,27 +1308,108 @@
       "kind": "continuous",
       "value_type": "date",
       "unit": "calendar date",
-      "min": "2026-05-01",
-      "max": "2026-09-30",
+      "min": "2026-01-01",
+      "max": "2026-12-31",
       "step": 1,
       "payoff": {
         "Candidate": {
           "min": 1,
-          "max": -3
+          "max": -1000
         },
         "Recruiter": {
           "min": 1,
-          "max": -3
+          "max": -1000
         }
       },
       "samples": [
+        "2026-01-01",
+        "2026-03-01",
         "2026-05-01",
-        "2026-06-01",
-        "2026-06-08",
-        "2026-07-16",
+        "2026-07-01",
         "2026-09-01",
-        "2026-09-30"
-      ]
+        "2026-09-30",
+        "2026-10-01",
+        "2026-12-31"
+      ],
+      "display_day": true,
+      "assume_year": 2026,
+      "natural_date_conventions": {
+        "month_only": 1,
+        "mid_month": 15,
+        "end_month": "last_day",
+        "asap": "2026-01-01"
+      },
+      "payoff_justification": "Both roles benefit from a prompt start. January 1 is +1; March 1 is 0; May 1 is -1; July 1 is -2; September 1–30 is -3. Intermediate dates receive proportional points. October 1–December 31 is -1000 for each role because the deal cannot proceed after September. Ignore supplied years; use 2026.",
+      "payoff_knots": {
+        "Candidate": [
+          {
+            "value": "2026-01-01",
+            "points": 1
+          },
+          {
+            "value": "2026-03-01",
+            "points": 0
+          },
+          {
+            "value": "2026-05-01",
+            "points": -1
+          },
+          {
+            "value": "2026-07-01",
+            "points": -2
+          },
+          {
+            "value": "2026-09-01",
+            "points": -3
+          },
+          {
+            "value": "2026-09-30",
+            "points": -3
+          },
+          {
+            "value": "2026-10-01",
+            "points": -1000
+          },
+          {
+            "value": "2026-12-31",
+            "points": -1000
+          }
+        ],
+        "Recruiter": [
+          {
+            "value": "2026-01-01",
+            "points": 1
+          },
+          {
+            "value": "2026-03-01",
+            "points": 0
+          },
+          {
+            "value": "2026-05-01",
+            "points": -1
+          },
+          {
+            "value": "2026-07-01",
+            "points": -2
+          },
+          {
+            "value": "2026-09-01",
+            "points": -3
+          },
+          {
+            "value": "2026-09-30",
+            "points": -3
+          },
+          {
+            "value": "2026-10-01",
+            "points": -1000
+          },
+          {
+            "value": "2026-12-31",
+            "points": -1000
+          }
+        ]
+      }
     },
     {
       "id": "probation_length",
@@ -1002,7 +1496,23 @@
         30,
         40,
         50
-      ]
+      ],
+      "proposal_domain": {
+        "min": 0,
+        "max": 365
+      },
+      "payoff_extrapolation": "linear",
+      "proposal_domain_note": "Amounts outside the scoring anchors continue at the same rate. An annual allowance cannot exceed 365 days. One day per week is displayed as 52 days per year for confirmation.",
+      "weekly_to_annual_factor": 52,
+      "aliases": [
+        "vacay day",
+        "vacay days",
+        "holiday days",
+        "paid time off",
+        "time off"
+      ],
+      "usual_value": 30,
+      "default_period": "year"
     },
     {
       "id": "remote_working_days",
@@ -1031,7 +1541,15 @@
         3,
         4,
         5
-      ]
+      ],
+      "proposal_domain": {
+        "min": 0,
+        "max": 5
+      },
+      "payoff_extrapolation": "linear",
+      "proposal_domain_note": "Amounts outside the scoring anchors continue at the same rate. There are five working days per week in this scenario.",
+      "usual_value": 3,
+      "default_period": "week"
     },
     {
       "id": "professional_training",
@@ -1233,8 +1751,8 @@
     "label": "Flexible 15 · three required terms",
     "frozen": true
   },
-  "material_revision": "human-feedback-2026-09-15-r1",
-  "material_revision_date": "2026-09-15",
+  "material_revision": "2026-10-17-september-deadline-v2",
+  "material_revision_date": "2026-10-17",
   "material_revision_note": "Approved human-feedback revision: narrower salary and expense-budget ranges; clearer social-media clue; Candidate role named immediately; INSTRUCTIONS heading; expanded version adds one broad benefits/resources clue without listing issues.",
   "display_units": {
     "Salary": "USD per year",
@@ -1243,9 +1761,21 @@
     "Remote Working Days": "days per week"
   },
   "frozen": true,
-  "revision_note": "Approved human-feedback revision: narrower salary and expense-budget ranges; clearer social-media clue; Candidate role named immediately; INSTRUCTIONS heading; expanded version adds one broad benefits/resources clue without listing issues.",
+  "revision_note": "Starting dates use month/day in 2026: Jan +1, Mar 0, May -1, Jul -2, Sep -3, Oct–Dec -1000 for both roles. Usual vacation 30/year; remote 3/week. Historical cohorts remain unchanged.",
   "payment": {
     "money_per_payoff_point_usd_default": 1.0,
     "agreement_bonus_cap_usd": null
-  }
+  },
+  "valuation_revision": "2026-10-17-september-deadline-v2",
+  "scoring_contract": {
+    "version": "empirica-continuous-v1",
+    "value_source": "issues",
+    "determinatescoretable": "Display examples and discrete choices; not a finite lookup for continuous issues.",
+    "continuous_scoring": "Use the numerical/date input and score it through the shared deterministic scorer.",
+    "default_input": "natural_language",
+    "private_table_disclosed": false,
+    "all_issue_definitions_stay_on_server": true
+  },
+  "readrole_instructions": "<p>Read the materials below. While you do, try to get into character—figure out: what matters to you? And what would you like to get from this negotiation?</p><p><strong>Take notes on the right</strong> to help you prepare. You can use those notes when the negotiation starts.<br><strong>Try the scoring calculator</strong> to see what different offers would be worth to you.</p>",
+  "tips": "<p>Get into character and think about what your first couple of offers would be, based on what matters to you and what you anticipate from your counterpart. When making offers remember the following:</p><ol style=\"padding-left:1.6em;margin:.4em 0;\"><li style=\"margin:.55em 0;\"><strong>Include the three required features:</strong> salary, a personal work-expense budget and a starting date. Write your offer in your own words.</li><li style=\"margin:.55em 0;\"><strong>Calculate, check, then submit.</strong> The platform calculates points automatically using rules set by the researchers. Check that it understood your offer before sending it.</li><li style=\"margin:.55em 0;\"><strong>You may negotiate the job or contract features described or suggested in your role materials.</strong> Features outside this set are not negotiable and do not affect your score.</li><li style=\"margin:.55em 0;\">Each additional feature is normally worth <strong>between −1 and +1 points</strong> to you, depending on your interests. The other party may value it differently.</li><li style=\"margin:.55em 0;\"><strong>Both parties must officially accept the same offer,</strong> worth more than 0 points to each. Without an agreement, both receive 0 points.</li></ol>"
 }

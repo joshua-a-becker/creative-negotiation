@@ -9,10 +9,22 @@
   "title": "Community Make & Meet venue practice",
   "summary": "A short practice negotiation between a community event organizer and a venue manager.",
   "parties": {
-    "Candidate": { "slot": 1, "name": "Community Event Organizer", "short": "Organizer" },
-    "Recruiter": { "slot": 2, "name": "Venue Manager", "short": "Manager" }
+    "Candidate": {
+      "slot": 1,
+      "name": "Community Event Organizer",
+      "short": "Organizer"
+    },
+    "Recruiter": {
+      "slot": 2,
+      "name": "Venue Manager",
+      "short": "Manager"
+    }
   },
-  "required_issues": ["Venue fee", "Event date", "Closing time"],
+  "required_issues": [
+    "Venue fee",
+    "Event date",
+    "Closing time"
+  ],
   "proposal_rules": {
     "require_positive_proposer": false,
     "positive_threshold": 0,
@@ -25,11 +37,271 @@
   "roles": {
     "Candidate": {
       "summary": "You are a Community Event Organizer negotiating with a Venue Manager. You want an affordable venue, enough planning time, and a relaxed evening for your Make & Meet.",
-      "full_text": "You are a Community Event Organizer negotiating with a Venue Manager to book a community hall. You are planning a relaxed Make & Meet where neighbors can try creative activities, share food, and meet local makers. Every offer must include a venue fee, an event date, and a closing time. The event can take place on any date in August or September next year. You prefer a lower fee, a later date, and a later closing time. The Venue Manager prefers a higher fee, an earlier date, and an earlier closing time because this makes the booking easier to staff and run. You may also negotiate practical details: ask to use the venue's projector or offer to bring your own; decide whether your volunteers or the venue staff will clean up; ask to cancel without a charge if you give notice; request early access to set up tables; and decide who provides door staff and refreshments."
+      "full_text": "You are a Community Event Organizer negotiating with a Venue Manager to book a community hall. You are planning a relaxed Make & Meet where neighbors can try creative activities, share food, and meet local makers. Every offer must include a venue fee, an event date, and a closing time. The event can take place on any date in August or September next year. You prefer a lower fee, a later date, and a later closing time. The Venue Manager prefers a higher fee, an earlier date, and an earlier closing time because this makes the booking easier to staff and run. You may also negotiate practical details: ask to use the venue's projector or offer to bring your own; decide whether your volunteers or the venue staff will clean up; ask to cancel without a charge if you give notice; request early access to set up tables; and decide who provides door staff and refreshments.",
+      "RP": 0,
+      "BATNA": "Without an agreement you receive 0 points. You may accept only an offer worth more than 0 to you.",
+      "determinatescoretable": {
+        "Venue fee": [
+          {
+            "option": "$100",
+            "score": 2.0
+          },
+          {
+            "option": "$150",
+            "score": 1.7142857142857144
+          },
+          {
+            "option": "$300",
+            "score": 0.8571428571428572
+          },
+          {
+            "option": "$500",
+            "score": -0.2857142857142856
+          },
+          {
+            "option": "$800",
+            "score": -2.0
+          }
+        ],
+        "Event date": [
+          {
+            "option": "1 August",
+            "score": -1.0
+          },
+          {
+            "option": "15 August",
+            "score": -0.5333333333333333
+          },
+          {
+            "option": "1 September",
+            "score": 0.03333333333333344
+          },
+          {
+            "option": "15 September",
+            "score": 0.5
+          },
+          {
+            "option": "30 September",
+            "score": 1.0
+          }
+        ],
+        "Closing time": [
+          {
+            "option": "5:00 p.m.",
+            "score": -1.0
+          },
+          {
+            "option": "6:00 p.m.",
+            "score": -0.67
+          },
+          {
+            "option": "7:00 p.m.",
+            "score": -0.33
+          },
+          {
+            "option": "8:00 p.m.",
+            "score": 0.0
+          },
+          {
+            "option": "9:00 p.m.",
+            "score": 0.33
+          },
+          {
+            "option": "10:00 p.m.",
+            "score": 0.67
+          },
+          {
+            "option": "11:00 p.m.",
+            "score": 1.0
+          }
+        ]
+      },
+      "continuous_scoring": {
+        "Venue fee": {
+          "value_type": "currency",
+          "unit": "USD",
+          "domain": {
+            "min": 100,
+            "max": 800
+          },
+          "reference_min": 100,
+          "reference_max": 800,
+          "interpolation": "piecewise_linear",
+          "extrapolation": "reject",
+          "knots": [
+            {
+              "value": 100,
+              "score": 2.0
+            },
+            {
+              "value": 800,
+              "score": -2.0
+            }
+          ],
+          "examples_are_not_exhaustive": true,
+          "step_is_display_hint": true,
+          "input_type": "number"
+        },
+        "Event date": {
+          "value_type": "date",
+          "unit": "date",
+          "domain": {
+            "min": "2027-08-01",
+            "max": "2027-09-30"
+          },
+          "reference_min": "2027-08-01",
+          "reference_max": "2027-09-30",
+          "interpolation": "piecewise_linear",
+          "extrapolation": "reject",
+          "knots": [
+            {
+              "value": "2027-08-01",
+              "score": -1.0
+            },
+            {
+              "value": "2027-09-30",
+              "score": 1.0
+            }
+          ],
+          "examples_are_not_exhaustive": true,
+          "step_is_display_hint": true,
+          "input_type": "date"
+        }
+      }
     },
     "Recruiter": {
       "summary": "You manage the venue. You want a fair fee, an earlier booking date, and a manageable closing time.",
-      "full_text": "You are the Venue Manager for a community hall considering a Make & Meet booking. Every offer must include a venue fee, an event date, and a closing time. The event can take place on any date in August or September next year. A higher fee supports the venue. An earlier date helps fill a quieter part of the calendar, and an earlier closing time lowers staffing costs. Projector use, cleanup, cancellation notice, early setup access, door staffing, and refreshments also affect the work and risk involved in the booking."
+      "full_text": "You are the Venue Manager for a community hall considering a Make & Meet booking. Every offer must include a venue fee, an event date, and a closing time. The event can take place on any date in August or September next year. A higher fee supports the venue. An earlier date helps fill a quieter part of the calendar, and an earlier closing time lowers staffing costs. Projector use, cleanup, cancellation notice, early setup access, door staffing, and refreshments also affect the work and risk involved in the booking.",
+      "RP": 0,
+      "BATNA": "Without an agreement you receive 0 points. You may accept only an offer worth more than 0 to you.",
+      "determinatescoretable": {
+        "Venue fee": [
+          {
+            "option": "$100",
+            "score": -2.0
+          },
+          {
+            "option": "$150",
+            "score": -1.7142857142857144
+          },
+          {
+            "option": "$300",
+            "score": -0.8571428571428572
+          },
+          {
+            "option": "$500",
+            "score": 0.2857142857142856
+          },
+          {
+            "option": "$800",
+            "score": 2.0
+          }
+        ],
+        "Event date": [
+          {
+            "option": "1 August",
+            "score": 1.0
+          },
+          {
+            "option": "15 August",
+            "score": 0.5333333333333333
+          },
+          {
+            "option": "1 September",
+            "score": -0.03333333333333344
+          },
+          {
+            "option": "15 September",
+            "score": -0.5
+          },
+          {
+            "option": "30 September",
+            "score": -1.0
+          }
+        ],
+        "Closing time": [
+          {
+            "option": "5:00 p.m.",
+            "score": 1.0
+          },
+          {
+            "option": "6:00 p.m.",
+            "score": 0.67
+          },
+          {
+            "option": "7:00 p.m.",
+            "score": 0.33
+          },
+          {
+            "option": "8:00 p.m.",
+            "score": 0.0
+          },
+          {
+            "option": "9:00 p.m.",
+            "score": -0.33
+          },
+          {
+            "option": "10:00 p.m.",
+            "score": -0.67
+          },
+          {
+            "option": "11:00 p.m.",
+            "score": -1.0
+          }
+        ]
+      },
+      "continuous_scoring": {
+        "Venue fee": {
+          "value_type": "currency",
+          "unit": "USD",
+          "domain": {
+            "min": 100,
+            "max": 800
+          },
+          "reference_min": 100,
+          "reference_max": 800,
+          "interpolation": "piecewise_linear",
+          "extrapolation": "reject",
+          "knots": [
+            {
+              "value": 100,
+              "score": -2.0
+            },
+            {
+              "value": 800,
+              "score": 2.0
+            }
+          ],
+          "examples_are_not_exhaustive": true,
+          "step_is_display_hint": true,
+          "input_type": "number"
+        },
+        "Event date": {
+          "value_type": "date",
+          "unit": "date",
+          "domain": {
+            "min": "2027-08-01",
+            "max": "2027-09-30"
+          },
+          "reference_min": "2027-08-01",
+          "reference_max": "2027-09-30",
+          "interpolation": "piecewise_linear",
+          "extrapolation": "reject",
+          "knots": [
+            {
+              "value": "2027-08-01",
+              "score": 1.0
+            },
+            {
+              "value": "2027-09-30",
+              "score": -1.0
+            }
+          ],
+          "examples_are_not_exhaustive": true,
+          "step_is_display_hint": true,
+          "input_type": "date"
+        }
+      }
     }
   },
   "practice": {
@@ -44,7 +316,17 @@
     {
       "name": "Venue fee",
       "definition": "The total price paid to rent the venue.",
-      "aliases": ["fee", "venue cost", "rental cost", "price", "cost of the venue", "hall price", "hall hire", "booking cost", "space rental"],
+      "aliases": [
+        "fee",
+        "venue cost",
+        "rental cost",
+        "price",
+        "cost of the venue",
+        "hall price",
+        "hall hire",
+        "booking cost",
+        "space rental"
+      ],
       "required": true,
       "kind": "continuous",
       "value_type": "currency",
@@ -52,16 +334,34 @@
       "min": 100,
       "max": 800,
       "step": 25,
-      "samples": [100, 150, 300, 500, 800],
+      "samples": [
+        100,
+        150,
+        300,
+        500,
+        800
+      ],
       "payoff": {
-        "Candidate": { "min": 2.0, "max": -2.0 },
-        "Recruiter": { "min": -2.0, "max": 2.0 }
+        "Candidate": {
+          "min": 2.0,
+          "max": -2.0
+        },
+        "Recruiter": {
+          "min": -2.0,
+          "max": 2.0
+        }
       }
     },
     {
       "name": "Event date",
       "definition": "The calendar date when the community event takes place.",
-      "aliases": ["date", "day", "event day", "booking date", "start date"],
+      "aliases": [
+        "date",
+        "day",
+        "event day",
+        "booking date",
+        "start date"
+      ],
       "required": true,
       "kind": "continuous",
       "value_type": "date",
@@ -70,88 +370,237 @@
       "min": "2027-08-01",
       "max": "2027-09-30",
       "step": 1,
-      "samples": ["2027-08-01", "2027-08-15", "2027-09-01", "2027-09-15", "2027-09-30"],
+      "samples": [
+        "2027-08-01",
+        "2027-08-15",
+        "2027-09-01",
+        "2027-09-15",
+        "2027-09-30"
+      ],
       "payoff": {
-        "Candidate": { "min": -1.0, "max": 1.0 },
-        "Recruiter": { "min": 1.0, "max": -1.0 }
+        "Candidate": {
+          "min": -1.0,
+          "max": 1.0
+        },
+        "Recruiter": {
+          "min": 1.0,
+          "max": -1.0
+        }
       }
     },
     {
       "name": "Closing time",
       "definition": "The time when the event ends and guests leave.",
-      "aliases": ["close", "closing", "end time", "finish time", "wrap up"],
+      "aliases": [
+        "close",
+        "closing",
+        "end time",
+        "finish time",
+        "wrap up"
+      ],
       "required": true,
       "kind": "discrete",
       "options": [
-        { "label": "5:00 p.m.", "Candidate": -1.0, "Recruiter": 1.0 },
-        { "label": "6:00 p.m.", "Candidate": -0.67, "Recruiter": 0.67 },
-        { "label": "7:00 p.m.", "Candidate": -0.33, "Recruiter": 0.33 },
-        { "label": "8:00 p.m.", "Candidate": 0.0, "Recruiter": 0.0 },
-        { "label": "9:00 p.m.", "Candidate": 0.33, "Recruiter": -0.33 },
-        { "label": "10:00 p.m.", "Candidate": 0.67, "Recruiter": -0.67 },
-        { "label": "11:00 p.m.", "Candidate": 1.0, "Recruiter": -1.0 }
+        {
+          "label": "5:00 p.m.",
+          "Candidate": -1.0,
+          "Recruiter": 1.0
+        },
+        {
+          "label": "6:00 p.m.",
+          "Candidate": -0.67,
+          "Recruiter": 0.67
+        },
+        {
+          "label": "7:00 p.m.",
+          "Candidate": -0.33,
+          "Recruiter": 0.33
+        },
+        {
+          "label": "8:00 p.m.",
+          "Candidate": 0.0,
+          "Recruiter": 0.0
+        },
+        {
+          "label": "9:00 p.m.",
+          "Candidate": 0.33,
+          "Recruiter": -0.33
+        },
+        {
+          "label": "10:00 p.m.",
+          "Candidate": 0.67,
+          "Recruiter": -0.67
+        },
+        {
+          "label": "11:00 p.m.",
+          "Candidate": 1.0,
+          "Recruiter": -1.0
+        }
       ]
     },
     {
       "name": "Projector",
       "definition": "Who supplies the projector used for demonstrations.",
-      "aliases": ["projector", "screen", "presentation equipment", "AV equipment", "display screen"],
+      "aliases": [
+        "projector",
+        "screen",
+        "presentation equipment",
+        "AV equipment",
+        "display screen"
+      ],
       "kind": "discrete",
       "options": [
-        { "label": "Venue projector included", "Candidate": 1.0, "Recruiter": -0.25 },
-        { "label": "Organizer brings a projector", "Candidate": -0.25, "Recruiter": 0.25 }
+        {
+          "label": "Venue projector included",
+          "Candidate": 1.0,
+          "Recruiter": -0.25
+        },
+        {
+          "label": "Organizer brings a projector",
+          "Candidate": -0.25,
+          "Recruiter": 0.25
+        }
       ]
     },
     {
       "name": "Cleanup",
       "definition": "Who cleans the room after the event.",
-      "aliases": ["cleanup", "cleaning", "tidy up", "clear the room", "leave the room clean"],
+      "aliases": [
+        "cleanup",
+        "cleaning",
+        "tidy up",
+        "clear the room",
+        "leave the room clean"
+      ],
       "kind": "discrete",
       "options": [
-        { "label": "Organizer handles cleanup", "Candidate": -0.5, "Recruiter": 1.0 },
-        { "label": "Venue handles cleanup", "Candidate": 0.5, "Recruiter": -0.5 }
+        {
+          "label": "Organizer handles cleanup",
+          "Candidate": -0.5,
+          "Recruiter": 1.0
+        },
+        {
+          "label": "Venue handles cleanup",
+          "Candidate": 0.5,
+          "Recruiter": -0.5
+        }
       ]
     },
     {
       "name": "Cancellation notice",
       "definition": "Whether the organizer may cancel without a charge by giving notice.",
-      "aliases": ["cancellation", "cancel", "refund", "notice"],
+      "aliases": [
+        "cancellation",
+        "cancel",
+        "refund",
+        "notice"
+      ],
       "kind": "discrete",
       "options": [
-        { "label": "Free cancellation allowed with notice", "Candidate": 0.75, "Recruiter": -0.5 },
-        { "label": "Booking is non-refundable", "Candidate": -0.75, "Recruiter": 0.75 }
+        {
+          "label": "Free cancellation allowed with notice",
+          "Candidate": 0.75,
+          "Recruiter": -0.5
+        },
+        {
+          "label": "Booking is non-refundable",
+          "Candidate": -0.75,
+          "Recruiter": 0.75
+        }
       ]
     },
     {
       "name": "Setup access",
       "definition": "Whether the organizer may enter before the event to prepare the room.",
-      "aliases": ["setup", "set up", "early access", "access before", "load in", "arrive early", "get in early"],
+      "aliases": [
+        "setup",
+        "set up",
+        "early access",
+        "access before",
+        "load in",
+        "arrive early",
+        "get in early"
+      ],
       "kind": "discrete",
       "options": [
-        { "label": "Early setup access included", "Candidate": 0.75, "Recruiter": -0.25 },
-        { "label": "No early setup access", "Candidate": -0.5, "Recruiter": 0.5 }
+        {
+          "label": "Early setup access included",
+          "Candidate": 0.75,
+          "Recruiter": -0.25
+        },
+        {
+          "label": "No early setup access",
+          "Candidate": -0.5,
+          "Recruiter": 0.5
+        }
       ]
     },
     {
       "name": "Door staffing",
       "definition": "Who provides people to welcome guests and manage the entrance.",
-      "aliases": ["door staff", "entrance staff", "check-in staff", "registration staff", "greeters", "door volunteers", "event security", "security staff"],
+      "aliases": [
+        "door staff",
+        "entrance staff",
+        "check-in staff",
+        "registration staff",
+        "greeters",
+        "door volunteers",
+        "event security",
+        "security staff"
+      ],
       "kind": "discrete",
       "options": [
-        { "label": "Venue provides door staff", "Candidate": 0.5, "Recruiter": -0.5 },
-        { "label": "Organizer provides door staff", "Candidate": -0.25, "Recruiter": 0.5 }
+        {
+          "label": "Venue provides door staff",
+          "Candidate": 0.5,
+          "Recruiter": -0.5
+        },
+        {
+          "label": "Organizer provides door staff",
+          "Candidate": -0.25,
+          "Recruiter": 0.5
+        }
       ]
     },
     {
       "name": "Food and refreshments",
       "definition": "Who provides food or refreshments for the event.",
-      "aliases": ["food", "free food", "refreshments", "snacks", "drinks", "catering", "food service"],
+      "aliases": [
+        "food",
+        "free food",
+        "refreshments",
+        "snacks",
+        "drinks",
+        "catering",
+        "food service"
+      ],
       "kind": "discrete",
       "options": [
-        { "label": "Venue provides refreshments at no extra charge", "Candidate": 0.5, "Recruiter": -0.5 },
-        { "label": "Organizer provides refreshments", "Candidate": -0.25, "Recruiter": 0.25 },
-        { "label": "No refreshments included", "Candidate": -0.5, "Recruiter": 0.5 }
+        {
+          "label": "Venue provides refreshments at no extra charge",
+          "Candidate": 0.5,
+          "Recruiter": -0.5
+        },
+        {
+          "label": "Organizer provides refreshments",
+          "Candidate": -0.25,
+          "Recruiter": 0.25
+        },
+        {
+          "label": "No refreshments included",
+          "Candidate": -0.5,
+          "Recruiter": 0.5
+        }
       ]
     }
-  ]
+  ],
+  "scoring_contract": {
+    "version": "empirica-continuous-v1",
+    "value_source": "issues",
+    "determinatescoretable": "Display examples and discrete choices; not a finite lookup for continuous issues.",
+    "continuous_scoring": "Use the numerical/date input and score it through the shared deterministic scorer.",
+    "default_input": "natural_language",
+    "private_table_disclosed": false,
+    "all_issue_definitions_stay_on_server": true
+  }
 }

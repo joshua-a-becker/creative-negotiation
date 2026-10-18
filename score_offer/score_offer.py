@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import subprocess
@@ -11,7 +12,16 @@ import sys
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parent
+def runtime_root(script: Path) -> Path:
+    """Find app/ beside this script or one folder above it."""
+    folder = script.resolve().parent
+    for candidate in (folder, folder.parent):
+        if (candidate / 'app/backend/stream.py').is_file():
+            return candidate
+    return folder.parent
+
+
+ROOT = runtime_root(Path(__file__))
 APP = ROOT / "app"
 SCORER = APP / "backend" / "stream.py"
 CONFIG = APP / "config"
@@ -23,16 +33,31 @@ def clean_unicode(value: object) -> str:
     return str(value or "").encode("utf-8", errors="replace").decode("utf-8")
 
 
-def main() -> int:
+def main(default_space: str | None = None) -> int:
     parser = argparse.ArgumentParser(description="Score one Candidate-Recruiter offer.")
     parser.add_argument("--role", choices=("Candidate", "Recruiter"), default="Candidate")
-    parser.add_argument("--issue-space", choices=("tutorial", "15", "200", "215", "fixed-15"), default=os.environ.get("SCORER_DEFAULT_SPACE", "15"), help="15/200/215 use flexible materials; fixed-15 requires all 15 terms.")
+    parser.add_argument("--issue-space", choices=("tutorial", "15", "200", "215", "fixed-15"), default=default_space or os.environ.get("SCORER_DEFAULT_SPACE", "15"), help="15/200/215 use flexible materials; fixed-15 requires all 15 terms.")
     inputs = parser.add_mutually_exclusive_group()
     inputs.add_argument("--text", help="Offer text. If omitted, the program asks for it.")
     inputs.add_argument("--choices-json", help="JSON object of explicit issue choices; scores without an LLM call.")
+    parser.add_argument("--previous-offer", default="", help="The prior offer, used only when the new text explicitly refers back to it.")
     parser.add_argument("--json", action="store_true", help="Print the complete structured result.")
     parser.add_argument("--scenario-file", help="Path to an external scenario JSON (both roles' issues/ranges/payoffs); overrides --issue-space.")
+    parser.add_argument('--version', action='store_true', help='Print runtime/scenario fingerprints without making an AI call.')
     args = parser.parse_args()
+
+    scenario_files = {"tutorial": "tutorial.json", "15": "small-15.json", "200": "large-200.json", "215": "large-215.json", "fixed-15": "fixed-15.json"}
+    scenario = Path(args.scenario_file).resolve() if args.scenario_file else CONFIG / scenario_files[args.issue_space]
+    if not SCORER.is_file() or not scenario.is_file():
+        print("Scorer or scenario file not found. Keep app/ beside the script or beside its parent folder, and check --scenario-file.", file=sys.stderr)
+        return 2
+    if args.version:
+        data = json.loads(scenario.read_text(encoding='utf-8'))
+        print(json.dumps({'scenario_id': data.get('scenario_id'), 'issue_count': len(data.get('issues', [])),
+            'scenario_sha256': hashlib.sha256(scenario.read_bytes()).hexdigest(),
+            'stream_sha256': hashlib.sha256(SCORER.read_bytes()).hexdigest(),
+            'engine_sha256': hashlib.sha256((APP/'backend/offer_engine.py').read_bytes()).hexdigest()}, indent=2))
+        return 0
 
     if args.choices_json is not None:
         try:
@@ -48,13 +73,8 @@ def main() -> int:
         if not offer_text:
             print("Please provide an offer.", file=sys.stderr)
             return 2
-        payload = {"text": offer_text, "previous_offer": ""}
+        payload = {"text": offer_text, "previous_offer": clean_unicode(args.previous_offer).strip()}
 
-    scenario_files = {"tutorial": "tutorial.json", "15": "small-15.json", "200": "large-200.json", "215": "large-215.json", "fixed-15": "fixed-15.json"}
-    scenario = Path(args.scenario_file).resolve() if args.scenario_file else CONFIG / scenario_files[args.issue_space]
-    if not SCORER.is_file() or not scenario.is_file():
-        print("Scorer or scenario file not found. Keep empirica/ beside app/ and check --scenario-file.", file=sys.stderr)
-        return 2
     environment = {
         **os.environ,
         "PYTHONIOENCODING": "utf-8",
