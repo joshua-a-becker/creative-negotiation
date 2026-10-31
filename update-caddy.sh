@@ -3,16 +3,15 @@
 # Caddy HTTPS Setup Script
 # Run this ON the server (157.245.212.151)
 
-set -e
 
 echo "Updating Caddy reverse proxy..."
 
 # Create Caddyfile
 cat > /etc/caddy/Caddyfile << 'EOF'
-challenge.negotiation.education {
+platformdev.negotiation.education {
     reverse_proxy localhost:3000
 }
-platform.negotiation.education {
+negotiation.socialscience.app {
     reverse_proxy localhost:3000
 }
 EOF
